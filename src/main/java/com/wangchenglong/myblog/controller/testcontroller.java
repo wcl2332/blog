@@ -30,4 +30,9 @@ public class testcontroller {
     @PostMapping("/{name}")
     public void findAllByName(){
     }
+
+    @PostMapping("/delete")
+    public static String del() {
+        return "";
+    }
 }
