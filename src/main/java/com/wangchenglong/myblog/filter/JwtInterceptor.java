@@ -35,7 +35,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         //判断 token 是否为空
         String token = request.getHeader("token");
         System.out.println("token>>>" + token);
-        if (token == null || "".equals(token)) {
+        if (token == null || token.isEmpty()) {
             Result result = Result.fail(ErrorCode.Token_IS_ERROR.getCode(), ErrorCode.Token_IS_ERROR.getMsg());
             response.setContentType("application/json;charset=utf-8");
             response.getWriter().print(new ObjectMapper().writeValueAsString(result));
