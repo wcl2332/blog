@@ -4,9 +4,12 @@ spring:
   datasource:
     druid:
       type: com.alibaba.druid.pool.DruidDataSource
-      url: jdbc:mysql://111.229.169.224:3306/myblog?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8
-      username: wangchenglong
-      password: wcldll3344
+#      url: jdbc:mysql://111.229.169.224:3306/myblog?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8
+#      username: wangchenglong
+#      password: wcldll3344
+      url: jdbc:mysql://127.0.0.1:3306/myblog?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8
+      username: root
+      password: root
       driver-class-name: com.mysql.jdbc.Driver
   mvc:
     pathmatch:

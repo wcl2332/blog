@@ -117,14 +117,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         long size = articlePageInfo.getSize();
         long pages = articlePageInfo.getPages();
         List<Article> articles = articlePageInfo.getRecords();
-        List<ArticleVo> articleVOList = copyPropertiesList(articles);
-        PageVo pageVO = new PageVo();
-        pageVO.setCurrent(current);
-        pageVO.setSize(size);
-        pageVO.setTotal(total);
-        pageVO.setPages(pages);
-        pageVO.setRecords(articleVOList);
-        return Result.success(pageVO);
+        List<ArticleVo> articleVoList = copyPropertiesList(articles);
+        PageVo pageVo = new PageVo();
+        pageVo.setCurrent(current);
+        pageVo.setSize(size);
+        pageVo.setTotal(total);
+        pageVo.setPages(pages);
+        pageVo.setRecords(articleVoList);
+        return Result.success(pageVo);
     }
 
     @Override
@@ -150,7 +150,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
         }
         // insert 插入tag 标签信息
-        List<TagDto> tagDTOListList = articleDTO.getTagDTO();
+        List<TagDto> tagDTOListList = articleDTO.getTagDto();
         List<Tag> tagList = copytagDtoProertiesList(tagDTOListList);
         ArticleTag articleTag = new ArticleTag();
         List<ArticleTag> articleTagList = new ArrayList<>();
@@ -171,6 +171,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public Result updateArticleWeight(Long articleId, Long userId) {
         Article article = articleMapper.selectById(articleId);
+        if(Objects.isNull(article)) {
+            return Result.fail(ErrorCode.ARTICLE_IS_NULL.getCode(),ErrorCode.ARTICLE_IS_NULL.getMsg());
+        }
         Integer weight = article.getWeight();
         if (weight == 0) {
             article.setWeight(1);
@@ -208,7 +211,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
         }
         // insert 插入tag 标签信息
-        List<TagDto> tagDTOListList = articleDTO.getTagDTO();
+        List<TagDto> tagDTOListList = articleDTO.getTagDto();
         List<Tag> tagList = copytagDtoProertiesList(tagDTOListList);
         LambdaQueryWrapper<ArticleTag> articleTagQueryWrapper = new LambdaQueryWrapper<>();
         ArticleTag articleTag = articleTagService.getOne(articleTagQueryWrapper.eq(ArticleTag::getArticleId, articleDTO.getId()));
@@ -258,11 +261,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     public List<ArticleVo> copyPropertiesList(List<Article> list) {
-        List<ArticleVo> articleVOS = new ArrayList<>();
+        List<ArticleVo> articleVos = new ArrayList<>();
         for (Article article : list) {
-            articleVOS.add(copyPropertiesArticle(article));
+            articleVos.add(copyPropertiesArticle(article));
         }
-        return articleVOS;
+        return articleVos;
     }
 
     public ArticleVo copyPropertiesArticle(Article article) {
@@ -290,7 +293,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             tagIds.add(articleTag.getTagId());
         }
         List<Tag> tagList = new ArrayList<>();
-        if (tagIds.size() > 0) {
+        if (!tagIds.isEmpty()) {
             tagList = tagService.listByIds(tagIds);
         }
         log.info("tagIds{}" + tagIds);

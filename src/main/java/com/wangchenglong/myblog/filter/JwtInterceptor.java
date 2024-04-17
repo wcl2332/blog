@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
-    @Autowired
+    @Resource
     UserService userService;
 
     @Override
@@ -34,7 +35,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         }
         //判断 token 是否为空
         String token = request.getHeader("token");
-        System.out.println("token>>>" + token);
+        //System.out.println("token>>>" + token);
         if (token == null || token.isEmpty()) {
             Result result = Result.fail(ErrorCode.Token_IS_ERROR.getCode(), ErrorCode.Token_IS_ERROR.getMsg());
             response.setContentType("application/json;charset=utf-8");

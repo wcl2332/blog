@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 /**
  * @Author: Wangchenglong
@@ -35,14 +36,14 @@ public class UserController {
 
     @ApiOperation("修改个人信息")
     @PostMapping("/update")
-    public Result updateUserInfo(@RequestBody UserDto user, HttpServletRequest httpServletRequest) {
+    public Result updateUserInfo(@RequestBody UserDto userDto, HttpServletRequest httpServletRequest) {
         //System.out.println("userDto" + user);
-        if (user == null) {
+        if (Objects.isNull(userDto)) {
             return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
         }
         String token = httpServletRequest.getHeader("token");
         Long userId = JWTUtils.getUserInfo(token);
-        userService.updateUserInfo(user, userId);
+        userService.updateUserInfo(userDto, userId);
         return Result.success("");
     }
 }

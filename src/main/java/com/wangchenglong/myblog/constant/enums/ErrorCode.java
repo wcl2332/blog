@@ -9,7 +9,6 @@ public enum ErrorCode {
      * 2000-2999  用户相关
      * 3000-3999  系统相关
      */
-    Exception_IS_ERROR(3000, "系统异常！"),
     Token_IS_ERROR(10001, "无效token"),
     Login_PWD_ERROR(1002, "账号或密码错误"),
     PARAMS_IS_NULL(1003, "提交参数有误"),
@@ -18,7 +17,8 @@ public enum ErrorCode {
     ARTICLE_IS_NULL(1006,"文章不存在"),
     UPLOAD_IS_FAILL(1007,"上传失败"),
     INSERT_IS_FAILL(1008,"添加失败"),
-    ACCOUNT_NOT_EXIST(2001, "用户不存在");
+    ACCOUNT_NOT_EXIST(2001, "用户不存在"),
+    Exception_IS_ERROR(3000, "系统异常");
 
     private int code;
     private String msg;

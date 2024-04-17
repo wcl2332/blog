@@ -24,7 +24,7 @@ public class UserDto {
     /**
      * 头像
      */
-    @ApiModelProperty(name = "avatar", value = "用户头像", dataType = "String", required = true)
+    @ApiModelProperty(name = "avatar", value = "用户头像", dataType = "String", required = false)
     private String avatar;
 
     /**
@@ -32,4 +32,10 @@ public class UserDto {
      */
     @ApiModelProperty(name = "summary", value = "用户简介", dataType = "String", required = false)
     private String summary;
+
+    /**
+     *
+     */
+    @ApiModelProperty(name = "email", value = "电子邮箱", dataType = "String", required = false)
+    private String email;
 }

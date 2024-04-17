@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 /**
  * @Author: Wangchenglong
  * @Date: 2023/7/26 15:03
- * @Description: TODO
+ * @Description: User 实体类
+ *
  */
 @Data
 @AllArgsConstructor
@@ -45,4 +46,8 @@ public class User {
      * 最近登录时间
      */
     private String lastTime;
+    /**
+     *  用户email 邮箱
+     */
+    private String email;
 }

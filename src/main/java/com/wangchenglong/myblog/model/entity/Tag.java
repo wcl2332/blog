@@ -25,6 +25,7 @@ public class Tag {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
+
     private Long authorId;
     /**
      * 标签 name

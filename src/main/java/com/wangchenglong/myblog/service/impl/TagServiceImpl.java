@@ -54,7 +54,17 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     }
 
     @Override
-    public Result delTag(Long userId) {
-        return null;
+    public Result delTag(Long tagId,Long userId) {
+        Tag tag = tagMapper.selectById(tagId);
+        if (tag == null) {
+            Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(),ErrorCode.PARAMS_IS_NULL.getMsg());
+        }
+        LambdaQueryWrapper<Tag> tagQueryWrapper = new LambdaQueryWrapper();
+        tagQueryWrapper.eq(Tag::getId, tagId);
+        int delete = tagMapper.delete(tagQueryWrapper);
+        if (delete <= 0) {
+            return Result.fail(ErrorCode.DELETE_IS_ERROR.getCode(),ErrorCode.DELETE_IS_ERROR.getMsg());
+        }
+        return Result.success("");
     }
 }

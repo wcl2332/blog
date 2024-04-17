@@ -9,5 +9,5 @@ public interface TagService extends IService<Tag> {
 
     Result saveTag(String tagName,Long userId);
 
-    Result delTag(Long userId);
+    Result delTag(Long tagId,Long userId);
 }
