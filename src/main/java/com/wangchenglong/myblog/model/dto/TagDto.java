@@ -17,8 +17,8 @@ import lombok.NoArgsConstructor;
 @ApiModel("标签")
 public class TagDto {
 
-//    @ApiModelProperty(name = "Id", value = "标签Id", dataType = "Long", required = true)
-//    private Long Id;
+    @ApiModelProperty(name = "Id", value = "标签Id", dataType = "Long", required = true)
+    private Long Id;
 
     @ApiModelProperty(name = "tagName", value = "标签名", dataType = "String", required = true)
     private String tagName;
