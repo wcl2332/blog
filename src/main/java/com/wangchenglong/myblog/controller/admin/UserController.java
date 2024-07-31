@@ -26,7 +26,7 @@ public class UserController {
     @Resource
     UserService userService;
 
-    @ApiOperation("获取个人信息")
+    @ApiOperation(value = "获取个人信息",response = Result.class)
     @GetMapping("/userInfo")
     public Result getUserInfo(HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("token");
@@ -37,7 +37,6 @@ public class UserController {
     @ApiOperation("修改个人信息")
     @PostMapping("/update")
     public Result updateUserInfo(@RequestBody UserDto userDto, HttpServletRequest httpServletRequest) {
-        //System.out.println("userDto" + user);
         if (Objects.isNull(userDto)) {
             return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
         }

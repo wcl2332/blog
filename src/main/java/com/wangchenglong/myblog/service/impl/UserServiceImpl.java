@@ -40,7 +40,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public Result updateUserInfo(UserDto userDTO, Long id) {
         User user = userMapper.selectById(id);
         BeanUtils.copyProperties(userDTO, user);
-        System.out.println(user);
+        //  System.out.println(user);
         LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         userLambdaUpdateWrapper.eq(User::getId, user.getId()).set(User::getRealName, user.getRealName())
                 .set(User::getAvatar, user.getAvatar()).set(User::getSummary, user.getSummary());

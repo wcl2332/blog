@@ -14,6 +14,7 @@ import com.wangchenglong.myblog.model.vo.Result;
 import com.wangchenglong.myblog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public class JWTUtils {
     private static final String JWTKEY = "123456!@###$$";
     private static final long TIME_UNIT = 1000;
 
-    @Autowired
+    @Resource
     UserService userService;
     /**
      * 创建token
@@ -40,7 +41,7 @@ public class JWTUtils {
         String token = JWT.create()
                 .withClaim("userid", user.getId())
                 .withClaim("account", user.getAccount())
-                .withExpiresAt(new Date(System.currentTimeMillis() + TIME_UNIT * 60 * 60 * 24))
+                .withExpiresAt(new Date(System.currentTimeMillis() + TIME_UNIT * 60 * 60 * 24 *7))
                 .sign(Algorithm.HMAC256(JWTKEY));
         return token;
     }

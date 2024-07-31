@@ -7,15 +7,21 @@ import com.wangchenglong.myblog.model.vo.Result;
 import com.wangchenglong.myblog.service.ArticleService;
 import com.wangchenglong.myblog.utils.JWTUtils;
 import com.wangchenglong.myblog.utils.QiniuUtils;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -34,8 +40,12 @@ public class ArticleAdminController {
     @Resource
     QiniuUtils qiniuUtils;
 
+
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
     @ApiOperation("删除文章")
-    @ApiImplicitParam(name ="articleId",value = "文章编号",dataType = "Long",required = true)
+    @ApiImplicitParam(name = "articleId", value = "文章编号", dataType = "Long", required = true)
     @GetMapping("/delete/{id}")
     public Result deleteArticleById(@PathVariable Long articleId, HttpServletRequest httpServletRequest) {
         if (articleId == null) {
@@ -93,7 +103,7 @@ public class ArticleAdminController {
 
     @ApiOperation("上传图片")
     @PostMapping("/upload")
-    public Result uploadImage(@RequestParam("image") MultipartFile file) {
+    public Result uploadImage(@RequestParam("image") MultipartFile file, HttpServletRequest request) {
         if (file == null) {
             return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
         }
@@ -101,11 +111,18 @@ public class ArticleAdminController {
         String originalFilename = file.getOriginalFilename();
         //唯一的文件名称
         String fileName = UUID.randomUUID().toString() + "." + StringUtils.substringAfterLast(originalFilename, ".");
-        boolean upload = qiniuUtils.upload(file, fileName);
-        if (!upload) {
+        Path targetLocation = Paths.get(uploadDir).resolve(fileName);
+        try {
+            Files.copy(file.getInputStream(), targetLocation);
+        } catch (IOException e) {
             return Result.fail(ErrorCode.UPLOAD_IS_FAILL.getCode(), ErrorCode.UPLOAD_IS_FAILL.getMsg());
         }
-        return Result.success(QiniuUtils.IMAGEURL + "/" + fileName);
+        // 返回文件访问 URL
+        String fileDownloadUri = request.getScheme() + "://" +
+                request.getServerName() + ":" +
+                request.getServerPort() +
+                "/image/" + fileName;
+        return Result.success(fileDownloadUri);
     }
 
     @ApiOperation("文章置顶")

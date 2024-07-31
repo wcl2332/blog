@@ -1,5 +1,6 @@
 package com.wangchenglong.myblog.model.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,15 +9,16 @@ import io.swagger.annotations.ApiModelProperty;
  * 统一返回信息
  */
 @ApiModel(value = "统一返回信息")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Result {
 
-    @ApiModelProperty(name = "code",value = "返回码")
+    @ApiModelProperty(name = "code", value = "返回码")
     private Integer code;
 
-    @ApiModelProperty(name = "msg",value = "返回信息")
+    @ApiModelProperty(name = "msg", value = "返回信息")
     private String msg;
 
-    @ApiModelProperty(name = "data",value = "返回数据")
+    @ApiModelProperty(name = "data", value = "返回数据")
     private Object data;
 
     public Integer getCode() {
@@ -49,6 +51,11 @@ public class Result {
         this.data = data;
     }
 
+    public Result(Integer code, String msg) {
+        this.code = code;
+        this.msg = msg;
+    }
+
     public Result() {
         super();
     }
@@ -58,7 +65,9 @@ public class Result {
     }
 
     public static Result fail(Integer code, String msg) {
-        return new Result(code, msg, null);
+        Result result = new Result(code, msg);
+        System.out.println(result);
+        return result;
     }
 
     @Override
@@ -66,7 +75,8 @@ public class Result {
         return "Result{" +
                 "code=" + code +
                 ", msg='" + msg + '\'' +
-                ", data=" + data +
+                (data != null ? ", data=" + data : "") +
                 '}';
     }
+
 }

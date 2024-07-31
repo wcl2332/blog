@@ -4,9 +4,9 @@ spring:
   datasource:
     druid:
       type: com.alibaba.druid.pool.DruidDataSource
-#      url: jdbc:mysql://111.229.169.224:3306/myblog?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8
-#      username: wangchenglong
-#      password: wcldll3344
+      #      url: jdbc:mysql://111.229.169.224:3306/myblog?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8
+      #      username: wangchenglong
+      #      password: wcldll3344
       url: jdbc:mysql://127.0.0.1:3306/myblog?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8
       username: root
       password: root
@@ -14,6 +14,15 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      file-size-threshold: 2MB
+      max-request-size: 20MB
+
+
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -23,4 +32,7 @@ qiniu:
   accessKey: EODrlkQ-w8OCdEWcNAevcAAIL9oFnXycNiBzYYVJ
   secretKey: R4e8YP9Oz4H-QKS6coWPqrRxOFqqqdP9FwLxOcb1
   bucket: blog-w
+
+file:
+  upload-dir: image/
 

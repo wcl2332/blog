@@ -19,23 +19,29 @@ public class UserDto {
     /**
      * 真实姓名
      */
-    @ApiModelProperty(name = "realName", value = "真实姓名", dataType = "String", required = true)
+    @ApiModelProperty(name = "realName", value = "真实姓名", required = true)
     private String realName;
     /**
      * 头像
      */
-    @ApiModelProperty(name = "avatar", value = "用户头像", dataType = "String", required = false)
-    private String avatar;
+    //    @ApiModelProperty(name = "avatar", value = "用户头像", required = false)
+    //    private String avatar;
 
     /**
      * 简介
      */
-    @ApiModelProperty(name = "summary", value = "用户简介", dataType = "String", required = false)
+    @ApiModelProperty(name = "summary", value = "用户简介", required = false)
     private String summary;
 
     /**
      *
      */
-    @ApiModelProperty(name = "email", value = "电子邮箱", dataType = "String", required = false)
+    @ApiModelProperty(name = "email", value = "电子邮箱", required = false)
     private String email;
+
+    /**
+     * 密码
+     */
+    //    @ApiModelProperty(name = "password", value = "密码", required = false)
+    //    private String password;
 }
