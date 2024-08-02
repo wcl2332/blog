@@ -18,6 +18,8 @@ public enum ErrorCode {
     UPLOAD_IS_FAILL(1007,"上传失败"),
     INSERT_IS_FAILL(1008,"添加失败"),
     ACCOUNT_NOT_EXIST(2001, "用户不存在"),
+    ACCOUNT_ALREADY_EXIST(2002,"用户已存在"),
+    ACCOUNT_INSERT_FAIL(2003,"注册失败"),
     Exception_IS_ERROR(3000, "系统异常");
 
     private int code;

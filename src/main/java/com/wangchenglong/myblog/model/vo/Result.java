@@ -64,6 +64,10 @@ public class Result {
         return new Result(0, "success", data);
     }
 
+    public static Result success() {
+        return new Result(0, "success");
+    }
+
     public static Result fail(Integer code, String msg) {
         Result result = new Result(code, msg);
         System.out.println(result);

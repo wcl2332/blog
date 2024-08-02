@@ -10,4 +10,6 @@ public interface UserService extends IService<User> {
     Result getUserById(Long id);
 
     Result updateUserInfo(UserDto userDTO, Long id);
+
+    Result registerUser(String loginName, String password);
 }
