@@ -11,5 +11,5 @@ public interface UserService extends IService<User> {
 
     Result updateUserInfo(UserDto userDTO, Long id);
 
-    Result registerUser(String loginName, String password);
+    Result registerUser(String loginName, String password, String imageUId, String imageCode);
 }

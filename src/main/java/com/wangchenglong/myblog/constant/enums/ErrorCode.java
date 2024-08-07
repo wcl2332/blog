@@ -5,7 +5,9 @@ package com.wangchenglong.myblog.constant.enums;
  */
 public enum ErrorCode {
     /**
-     * 规定 1000-1999  参数相关
+     * 规定
+     * 0          success
+     * 1000-1999  参数相关
      * 2000-2999  用户相关
      * 3000-3999  系统相关
      */

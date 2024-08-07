@@ -58,7 +58,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public Result registerUser(String loginName, String password) {
+    public Result registerUser(String loginName, String password, String imageUId, String imageCode) {
         LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
         userLambdaQueryWrapper.eq(User::getAccount, loginName);
         User user = userMapper.selectOne(userLambdaQueryWrapper);

@@ -28,7 +28,7 @@ public class LoginServiceImpl implements LoginService {
     private final String KEY = "123456789_abcde_";
 
     @Override
-    public Result login(String account, String password) {
+    public Result login(String account, String password, String imageUId, String imageCode) {
         LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(User::getAccount, account);
         User user = new User();
