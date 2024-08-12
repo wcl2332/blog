@@ -3,6 +3,7 @@ package com.wangchenglong.myblog.model.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,10 +21,12 @@ public class ArticleBody {
     /**
      * id
      */
+    @ApiModelProperty(value = "内容ID")
     @TableId(type = IdType.AUTO)
     private Long id;
     /**
      * 文章内容
      */
+    @ApiModelProperty(value = "文章内容", required = true)
     private String content;
 }

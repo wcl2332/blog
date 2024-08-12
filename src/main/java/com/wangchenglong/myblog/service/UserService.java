@@ -4,12 +4,13 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.wangchenglong.myblog.model.dto.UserDto;
 import com.wangchenglong.myblog.model.entity.User;
 import com.wangchenglong.myblog.model.vo.Result;
+import com.wangchenglong.myblog.model.vo.UserVo;
 
 public interface UserService extends IService<User> {
 
-    Result getUserById(Long id);
+    Result<UserVo> getUserById(Long id);
 
-    Result updateUserInfo(UserDto userDTO, Long id);
+    Result<Object> updateUserInfo(UserDto userDTO, Long id);
 
-    Result registerUser(String loginName, String password, String imageUId, String imageCode);
+    Result<String> registerUser(String loginName, String password, String imageUId, String imageCode,String nickName);
 }

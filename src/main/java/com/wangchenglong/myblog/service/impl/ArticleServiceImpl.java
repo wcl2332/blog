@@ -13,6 +13,7 @@ import com.wangchenglong.myblog.model.vo.ArticleVo;
 import com.wangchenglong.myblog.model.vo.PageVo;
 import com.wangchenglong.myblog.model.vo.Result;
 import com.wangchenglong.myblog.model.vo.UserVo;
+import com.wangchenglong.myblog.service.ArticleCategoryService;
 import com.wangchenglong.myblog.service.ArticleService;
 import com.wangchenglong.myblog.service.ArticleTagService;
 import com.wangchenglong.myblog.service.TagService;
@@ -45,29 +46,31 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     ArticleTagService articleTagService;
     @Resource
     TagService tagService;
+    @Resource
+    ArticleCategoryService articleCategoryService;
 
     @Override
-    public Result deleteArticleById(Long articleId, Long userId) {
+    public Result<Object> deleteArticleById(Long articleId, Long userId) {
         LambdaQueryWrapper<Article> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Article::getId, articleId).eq(Article::getAuthorId, userId);
         int delete = articleMapper.delete(lambdaQueryWrapper);
         if (delete <= 0) {
             return Result.fail(ErrorCode.DELETE_IS_ERROR.getCode(), ErrorCode.DELETE_IS_ERROR.getMsg());
         }
-        return Result.success("");
+        return Result.success();
     }
 
     @Override
-    public Result deleteArticlesBatch(List<Long> idlist, Long userId) {
+    public Result<Object> deleteArticlesBatch(List<Long> idlist, Long userId) {
         Integer deleteBatch = articleMapper.deleteBatch(idlist, userId);
         if (deleteBatch <= 0) {
             return Result.fail(ErrorCode.DELETE_IS_ERROR.getCode(), ErrorCode.DELETE_IS_ERROR.getMsg());
         }
-        return Result.success("");
+        return Result.success();
     }
 
     @Override
-    public Result findArticleById(Long articleId, Long userId) {
+    public Result<ArticleVo> findArticleById(Long articleId, Long userId) {
         LambdaQueryWrapper<Article> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Article::getId, articleId).eq(Article::getAuthorId, userId);
         Article article = articleMapper.selectOne(lambdaQueryWrapper);
@@ -99,7 +102,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         }
         log.info("tagIds>>>{}", tagIds);
         List<Tag> tagList = new ArrayList<>();
-        if (tagIds.size() > 0) {
+        if (!tagIds.isEmpty()) {
             tagList = tagService.listByIds(tagIds);
         }
         articleVO.setTag(tagList);
@@ -107,7 +110,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public Result listArticles(Integer page, Integer count, Long userId) {
+    public Result<PageVo<ArticleVo>> listArticles(Integer page, Integer count, Long userId) {
         Page<Article> articlePage = new Page<>(page, count);
         LambdaQueryWrapper<Article> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Article::getAuthorId, userId).orderByDesc(Article::getWeight, Article::getCreateTime);
@@ -118,7 +121,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         long pages = articlePageInfo.getPages();
         List<Article> articles = articlePageInfo.getRecords();
         List<ArticleVo> articleVoList = copyPropertiesList(articles);
-        PageVo pageVo = new PageVo();
+        PageVo<ArticleVo> pageVo = new PageVo();
         pageVo.setCurrent(current);
         pageVo.setSize(size);
         pageVo.setTotal(total);
@@ -129,7 +132,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     @Transactional
-    public Result saveArticle(ArticleDto articleDTO, Long userId) {
+    public Result<Object> saveArticle(ArticleDto articleDTO, Long userId) {
         Article article = new Article();
         BeanUtils.copyProperties(articleDTO, article);
         article.setAuthorId(userId);
@@ -150,11 +153,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
         }
         // insert 插入tag 标签信息
-        List<TagDto> tagDTOListList = articleDTO.getTagDto();
-        List<Tag> tagList = copytagDtoProertiesList(tagDTOListList);
-        ArticleTag articleTag = new ArticleTag();
+        String[] tagIds = articleDTO.getTagIds().split(",");
+        List<Tag> tagList = tagService.listByIds(Arrays.asList(tagIds));
         List<ArticleTag> articleTagList = new ArrayList<>();
         for (Tag tag : tagList) {
+            ArticleTag articleTag = new ArticleTag();
             articleTag.setTagId(tag.getId());
             articleTag.setArticleId(article.getId());
             articleTag.setUserId(userId);
@@ -165,19 +168,34 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (!b) {
             return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
         }
+        //分类
+        Long categoryId = articleDTO.getCategoryId();
+        Category category = categoryMapper.selectById(categoryId);
+        if (category == null) {
+            return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
+        }
+        ArticleCategory articleCategory = new ArticleCategory();
+        articleCategory.setCategoryId(categoryId);
+        articleCategory.setArticleId(article.getId());
+        articleCategory.setUserId(userId);
+        boolean save = articleCategoryService.save(articleCategory);
+        if (!save) {
+            return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
+        }
         return Result.success();
     }
 
     @Override
-    public Result updateArticleWeight(Long articleId, Long userId) {
+    public Result<Object> updateArticleWeight(Long articleId, Long userId) {
         Article article = articleMapper.selectById(articleId);
-        if(Objects.isNull(article)) {
-            return Result.fail(ErrorCode.ARTICLE_IS_NULL.getCode(),ErrorCode.ARTICLE_IS_NULL.getMsg());
+        if (Objects.isNull(article)) {
+            return Result.fail(ErrorCode.ARTICLE_IS_NULL.getCode(), ErrorCode.ARTICLE_IS_NULL.getMsg());
         }
         Integer weight = article.getWeight();
         if (weight == 0) {
-            article.setWeight(1);
-        } else if (weight == 1) {
+            Integer maxWeight = articleMapper.getMaxWeight();
+            article.setWeight(maxWeight + 1);
+        } else if (weight > 0) {
             article.setWeight(0);
         }
         int update = articleMapper.updateById(article);
@@ -188,7 +206,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public Result updateArticle(ArticleUpdateDto articleDTO, Long userId) {
+    @Transactional
+    public Result<Object> updateArticle(ArticleUpdateDto articleDTO, Long userId) {
         //1.判断文章是否存在
         Article article = articleMapper.selectById(articleDTO.getId());
         if (Objects.isNull(article)) {
@@ -211,31 +230,35 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
         }
         // insert 插入tag 标签信息
-        List<TagDto> tagDTOListList = articleDTO.getTagDto();
-        List<Tag> tagList = copytagDtoProertiesList(tagDTOListList);
-        LambdaQueryWrapper<ArticleTag> articleTagQueryWrapper = new LambdaQueryWrapper<>();
-        ArticleTag articleTag = articleTagService.getOne(articleTagQueryWrapper.eq(ArticleTag::getArticleId, articleDTO.getId()));
+        String[] tagIds = articleDTO.getTagIds().split(",");
+        List<Tag> tagList = tagService.listByIds(Arrays.asList(tagIds));
+        boolean remove = articleTagService.remove(new LambdaQueryWrapper<ArticleTag>().eq(ArticleTag::getArticleId, articleDTO.getId()).in(ArticleTag::getTagId, tagIds));
+        if (!remove) {
+            return Result.fail(ErrorCode.PARAMS_UPDATE_IS_ERROR.getCode(), ErrorCode.PARAMS_UPDATE_IS_ERROR.getMsg());
+        }
         List<ArticleTag> articleTagList = new ArrayList<>();
         for (Tag tag : tagList) {
+            ArticleTag articleTag = new ArticleTag();
             articleTag.setTagId(tag.getId());
             articleTag.setArticleId(article.getId());
+            articleTag.setUserId(article.getAuthorId());
             articleTagList.add(articleTag);
         }
         // 批量插入 articleTagService
-        boolean b = articleTagService.updateBatchById(articleTagList);
+        boolean b = articleTagService.saveBatch(articleTagList);
         if (!b) {
-            return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
+            return Result.fail(ErrorCode.PARAMS_UPDATE_IS_ERROR.getCode(), ErrorCode.PARAMS_UPDATE_IS_ERROR.getMsg());
         }
         return Result.success();
     }
 
     @Override
-    public Result searchArticle(String keyWord, Integer page, Integer count, Long userId) {
+    public Result<PageVo<ArticleVo>> searchArticle(String keyWord, Integer page, Integer count, Long userId) {
         Page<Article> articlePage = new Page<>(page, count);
         LambdaQueryWrapper<Article> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Article::getAuthorId, userId).like(Article::getTitle, keyWord).orderByDesc(Article::getWeight, Article::getCreateTime);
         Page<Article> articlePageInfo = articleMapper.selectPage(articlePage, lambdaQueryWrapper);
-        PageVo pageVO = new PageVo();
+        PageVo<ArticleVo> pageVO = new PageVo();
         pageVO.setPages(articlePageInfo.getPages());
         pageVO.setTotal(articlePageInfo.getTotal());
         pageVO.setCurrent(articlePageInfo.getCurrent());
@@ -296,7 +319,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (!tagIds.isEmpty()) {
             tagList = tagService.listByIds(tagIds);
         }
-        log.info("tagIds{}" + tagIds);
         articleVO.setTag(tagList);
         return articleVO;
     }

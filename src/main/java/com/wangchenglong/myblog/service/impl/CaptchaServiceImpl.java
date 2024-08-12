@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: Wangchenglong
@@ -24,15 +25,15 @@ public class CaptchaServiceImpl implements CapthaService {
     RedisTemplate<String, Object> redisTemplate;
 
     @Override
-    public Result getCaptha() {
+    public Result<CaptchaVo> getCaptha() {
         //定义图形验证码的长、宽、验证码字符数、干扰线宽度
         ShearCaptcha captcha = CaptchaUtil.createShearCaptcha(200, 100, 4, 4);
         String imageId = IdUtil.simpleUUID();
-        redisTemplate.opsForValue().set(imageId, captcha.getCode());
+        redisTemplate.opsForValue().set(imageId, captcha.getCode(),1, TimeUnit.DAYS);
         CaptchaVo captchaVo = new CaptchaVo();
         captchaVo.setUid(imageId);
         captchaVo.setCaptchaCode(captcha.getImageBase64Data());
-        return new Result().success(captchaVo);
+        return  Result.success(captchaVo);
     }
 
 

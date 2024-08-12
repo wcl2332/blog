@@ -3,12 +3,10 @@ package com.wangchenglong.myblog.controller.admin;
 import com.wangchenglong.myblog.constant.enums.ErrorCode;
 import com.wangchenglong.myblog.model.dto.UserDto;
 import com.wangchenglong.myblog.model.vo.Result;
+import com.wangchenglong.myblog.model.vo.UserVo;
 import com.wangchenglong.myblog.service.UserService;
 import com.wangchenglong.myblog.utils.JWTUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +27,12 @@ public class UserController {
     @Resource
     UserService userService;
 
-    @ApiOperation(value = "获取个人信息", response = Result.class)
+    @ApiOperation(value = "获取个人信息", response = UserVo.class)
+    @ApiResponses(
+            @ApiResponse(code = 0 ,message = "success",response = UserVo.class)
+    )
     @GetMapping("/userInfo")
-    public Result getUserInfo(HttpServletRequest httpServletRequest) {
+    public Result<UserVo> getUserInfo(HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("token");
         Long userId = JWTUtils.getUserInfo(token);
         return userService.getUserById(userId);
@@ -39,7 +40,7 @@ public class UserController {
 
     @ApiOperation("修改个人信息")
     @PostMapping("/update")
-    public Result updateUserInfo(@RequestBody UserDto userDto, HttpServletRequest httpServletRequest) {
+    public Result<Object> updateUserInfo(@RequestBody UserDto userDto, HttpServletRequest httpServletRequest) {
         if (Objects.isNull(userDto)) {
             return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
         }

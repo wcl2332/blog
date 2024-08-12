@@ -10,16 +10,16 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @ApiModel(value = "统一返回信息")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Result {
+public class Result<T> {
 
     @ApiModelProperty(name = "code", value = "返回码")
     private Integer code;
 
-    @ApiModelProperty(name = "msg", value = "返回信息")
+    @ApiModelProperty(name = "msg", value = "返回信息描述")
     private String msg;
 
     @ApiModelProperty(name = "data", value = "返回数据")
-    private Object data;
+    private T data;
 
     public Integer getCode() {
         return code;
@@ -37,15 +37,15 @@ public class Result {
         this.msg = msg;
     }
 
-    public Object getData() {
+    public T getData() {
         return data;
     }
 
-    public void setData(Object data) {
+    public void setData(T data) {
         this.data = data;
     }
 
-    public Result(Integer code, String msg, Object data) {
+    public Result(Integer code, String msg, T data) {
         this.code = code;
         this.msg = msg;
         this.data = data;
@@ -60,18 +60,16 @@ public class Result {
         super();
     }
 
-    public static Result success(Object data) {
-        return new Result(0, "success", data);
+    public static <T> Result<T> success(T data) {
+        return new Result<>(0, "success", data);
     }
 
-    public static Result success() {
-        return new Result(0, "success");
+    public static <T> Result<T> success() {
+        return new Result<>(0, "success");
     }
 
-    public static Result fail(Integer code, String msg) {
-        Result result = new Result(code, msg);
-        System.out.println(result);
-        return result;
+    public static <T> Result<T> fail(Integer code, String msg) {
+        return new Result<>(code, msg);
     }
 
     @Override

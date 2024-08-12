@@ -2,6 +2,7 @@ package com.wangchenglong.myblog.model.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
  * @Description: User 实体类
  *
  */
+@ApiModel("用户类")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,6 +31,11 @@ public class User {
      * 真实姓名
      */
     private String realName;
+
+    /**
+     * 昵称
+     */
+    private String nickName;
     /**
      * 头像
      */

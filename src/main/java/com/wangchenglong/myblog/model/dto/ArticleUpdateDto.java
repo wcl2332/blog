@@ -59,8 +59,8 @@ public class ArticleUpdateDto {
     /**
      * 标签
      */
-    @ApiModelProperty(name = "tagDto", value = "标签",  required = true)
-    private List<TagDto> tagDto;
+    @ApiModelProperty(name = "tagIds", value = "标签Ids 选择多个时，例如 3,4",  required = true)
+    private String tagIds;
 
     /**
      * 权重 用于文章置顶

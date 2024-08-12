@@ -8,4 +8,8 @@
             #{id}
         </foreach>
     </delete>
+    <select id="getMaxWeight" resultType="java.lang.Integer">
+        select max(weight)
+        from article;
+    </select>
 </mapper>

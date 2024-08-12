@@ -1,6 +1,7 @@
 package com.wangchenglong.myblog.model.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
@@ -53,6 +54,12 @@ public class Article {
      * 分类ID
      */
     private Long categoryId;
+
+    /**
+     *
+     */
+    @TableField(value = "tag_id")
+    private String tagIds;
 
     /**
      * 类型 文章类型 0 原创 1转载

@@ -4,6 +4,6 @@ import com.wangchenglong.myblog.model.vo.Result;
 
 public interface LoginService {
 
-    Result login(String account,String password, String  imageUID, String imageCode);
+    Result<String> login(String account,String password, String  imageUID, String imageCode);
 
 }

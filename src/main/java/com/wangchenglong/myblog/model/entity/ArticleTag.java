@@ -26,5 +26,6 @@ public class ArticleTag {
 
     private Long articleId;
 
+    @TableField(value = "tag_id")
     private Long tagId;
 }

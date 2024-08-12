@@ -1,12 +1,9 @@
-package com.wangchenglong.myblog.controller.common;
+package com.wangchenglong.myblog.controller.admin;
 
-import cn.hutool.captcha.CaptchaUtil;
-import cn.hutool.captcha.ShearCaptcha;
-import cn.hutool.captcha.generator.MathGenerator;
+import com.wangchenglong.myblog.model.vo.CaptchaVo;
 import com.wangchenglong.myblog.model.vo.Result;
 import com.wangchenglong.myblog.service.CapthaService;
-import com.wangchenglong.myblog.service.impl.CaptchaServiceImpl;
-import org.springframework.data.redis.core.RedisTemplate;
+import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
  * @Date: 2024/8/7 10:09
  * @Description: TODO
  */
+@Api(tags = "图片验证码")
 @RestController
 @RequestMapping("/captcha")
 public class CaptchaController {
@@ -26,7 +24,7 @@ public class CaptchaController {
     CapthaService captchaService;
 
     @GetMapping("/captchaImage")
-    private Result captchaImage(HttpServletRequest httpServletRequest) {
+    private Result<CaptchaVo> captchaImage(HttpServletRequest httpServletRequest) {
 
         return captchaService.getCaptha();
     }

@@ -21,24 +21,24 @@ public class ArticleDto {
     /**
      * 文章标题
      */
-    @ApiModelProperty(name = "title", value = "文章标题",  required = true)
+    @ApiModelProperty(name = "title", value = "文章标题", required = true)
     private String title;
 
     /**
      * 封面图片
      */
-    @ApiModelProperty(name = "coverImage", value = "文章封面",  required = false)
+    @ApiModelProperty(name = "coverImage", value = "文章封面", required = false)
     private String coverImage;
     /**
      * 文章内容
      */
-    @ApiModelProperty(name = "content", value = "文章内容",  required = true)
+    @ApiModelProperty(name = "content", value = "文章内容", required = true)
     private String content;
 
     /**
      * 文章类型
      */
-    @ApiModelProperty(name = "type", value = "文章类型(0-原创 1-转载)",  required = true)
+    @ApiModelProperty(name = "type", value = "文章类型(0-原创 1-转载)", required = true)
     private Integer type;
 
     /**
@@ -50,19 +50,19 @@ public class ArticleDto {
     /**
      * 分类ID
      */
-    @ApiModelProperty(name = "categoryId", value = "分类ID",  required = true)
+    @ApiModelProperty(name = "categoryId", value = "分类ID", required = true)
     private Long categoryId;
 
     /**
      * 标签
      */
-    @ApiModelProperty(name = "tagDto", value = "标签",  required = true)
-    private List<TagDto> tagDto;
+    @ApiModelProperty(name = "tagIds", value = "标签id列表（一个文章可以有多个标签） 选择多个时，例如 3,4", required = true)
+    private String tagIds;
 
     /**
      * 权重 用于文章置顶
      */
-    @ApiModelProperty(name = "weight", value = "分类ID",  required = true)
+    @ApiModelProperty(name = "weight", value = "权重 用于文章置顶,数字越大,排序越靠前", required = true)
     private Integer weight;
     /**
      * 状态 0 草稿 1 发布

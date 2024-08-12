@@ -10,6 +10,7 @@ import com.wangchenglong.myblog.service.LoginService;
 import com.wangchenglong.myblog.utils.JWTUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -24,11 +25,20 @@ import java.util.Date;
 public class LoginServiceImpl implements LoginService {
     @Resource
     UserMapper userMapper;
+    @Resource
+    RedisTemplate<String,Object> redisTemplate;
 
     private final String KEY = "123456789_abcde_";
 
     @Override
-    public Result login(String account, String password, String imageUId, String imageCode) {
+    public Result<String> login(String account, String password, String imageUId, String imageCode) {
+        Object result = redisTemplate.opsForValue().get(imageUId);
+        if (result == null) {
+            return Result.fail(ErrorCode.CAPTCHA_IS_NULL.getCode(),ErrorCode.CAPTCHA_IS_NULL.getMsg());
+        }
+        if (!result.toString().equals(imageCode)) {
+            return Result.fail(ErrorCode.CAPTCHA_IS_ERROR.getCode(), ErrorCode.CAPTCHA_IS_ERROR.getMsg());
+        }
         LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(User::getAccount, account);
         User user = new User();

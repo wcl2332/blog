@@ -21,13 +21,18 @@ public class WebMVConfiguration implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         //跨域配置
-        registry.addMapping("/**").allowedOrigins("http://localhost:8083");
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:8080")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")  // 允许的HTTP方法
+                .allowedHeaders("*")  // 允许的请求头
+                .allowCredentials(true);  // 允许发送Cookie;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
-                .addPathPatterns("/admin/**").excludePathPatterns("/admin/api/login","/admin/api/register");
+                .addPathPatterns("/admin/**")
+                .excludePathPatterns("/admin/api/login","/admin/api/register");
     }
 
     @Override

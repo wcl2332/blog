@@ -33,11 +33,11 @@ public class LoginController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "account", value = "账号", required = true),
             @ApiImplicitParam(name = "password", value = "密码", required = true),
-            @ApiImplicitParam(name = "imageUId", value = "验证码id", required = true),
+            @ApiImplicitParam(name = "imageUId", value = "验证码uid", required = true),
             @ApiImplicitParam(name = "imageCode", value = "用户输入图片验证码", required = true)
     })
     @PostMapping("/login")
-    public Result login(@RequestParam("account") String loginName,
+    public Result<String> login(@RequestParam("account") String loginName,
                         @RequestParam("password") String password,
                         @RequestParam("imageUId") String imageUId,
                         @RequestParam("imageCode") String imageCode) {
@@ -51,17 +51,19 @@ public class LoginController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "account", value = "账号", required = true),
             @ApiImplicitParam(name = "password", value = "密码", required = true),
-            @ApiImplicitParam(name = "imageUId", value = "验证码id", required = true),
-            @ApiImplicitParam(name = "imageCode", value = "用户输入图片验证码", required = true)
+            @ApiImplicitParam(name = "imageUId", value = "验证码uid", required = true),
+            @ApiImplicitParam(name = "imageCode", value = "用户输入图片验证码", required = true),
+            @ApiImplicitParam(name = "nickName", value = "昵称", required = true),
     })
     @PostMapping("/register")
-    public Result registerUser(@RequestParam("account") String loginName,
+    public Result<String> registerUser(@RequestParam("account") String loginName,
                                @RequestParam("password") String password,
                                @RequestParam("imageUId") String imageUId,
-                               @RequestParam("imageCode") String imageCode) {
+                               @RequestParam("imageCode") String imageCode,
+                               @RequestParam("nickName") String nickName) {
         if (StringUtils.isEmpty(loginName) || StringUtils.isEmpty(password) || StringUtils.isEmpty(imageUId) || StringUtils.isEmpty(imageCode)) {
-            return new Result(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
+            return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
         }
-        return userService.registerUser(loginName, password,imageUId, imageCode);
+        return userService.registerUser(loginName, password,imageUId, imageCode,nickName);
     }
 }
