@@ -11,6 +11,7 @@ import com.wangchenglong.myblog.model.vo.PageVo;
 import com.wangchenglong.myblog.model.vo.Result;
 import com.wangchenglong.myblog.service.CategoryService;
 import com.wangchenglong.myblog.utils.CopyProperties;
+import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -31,7 +32,12 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 
     @Override
     public Result<String> addCategory(String categoryName, Long authorId) {
-        Category category = new Category();
+        LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<Category>().eq(Category::getName, categoryName).eq(Category::getAuthorId, authorId);
+        Category category = categoryMapper.selectOne(wrapper);
+        if (category != null) {
+            return Result.fail(ErrorCode.PARAMS_IS_HAVE.PARAMS_TAG_IS_NULL.getCode(), ErrorCode.PARAMS_IS_HAVE.getMsg());
+        }
+        category = new Category();
         category.setName(categoryName);
         category.setAuthorId(authorId);
         int insert = categoryMapper.insert(category);
@@ -66,5 +72,13 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         pageVo.setPages(categoryPage.getPages());
         pageVo.setRecords(categories);
         return Result.success(pageVo);
+    }
+
+    @Override
+    public Result<List<CategoryVo>> searchCategory(String keyword, Long authorId) {
+        LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<Category>().like(Category::getName, keyword).eq(Category::getAuthorId, authorId);
+        List<Category> categories = categoryMapper.selectList(wrapper);
+        List<CategoryVo> categoryVos = copyProperties.copyList(categories, CategoryVo.class);
+        return Result.success(categoryVos);
     }
 }

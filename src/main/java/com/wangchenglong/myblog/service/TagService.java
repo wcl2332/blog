@@ -17,5 +17,7 @@ public interface TagService extends IService<Tag> {
 
     Result<PageVo<TagVo>> getTags(Long userId, Integer pageNum, Integer pageSize);
 
-    Result<String> deleteTags(Long [] tagIds, Long userId);
+    Result<String> deleteTags(Long[] tagIds, Long userId);
+
+    Result<List<TagVo>> searchTag(String tagName, Long userId);
 }

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Author: Wangchenglong
@@ -49,7 +50,12 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
 
     @Override
     public Result<Object> saveTag(String tagName, Long userId) {
-        Tag tag = new Tag();
+        LambdaQueryWrapper<Tag> wrapper = new LambdaQueryWrapper<Tag>().eq(Tag::getTagName, tagName).eq(Tag::getAuthorId, userId);
+        Tag tag = tagMapper.selectOne(wrapper);
+        if (!Objects.isNull(tag)) {
+            return Result.fail(ErrorCode.PARAMS_IS_HAVE.getCode(), ErrorCode.PARAMS_IS_HAVE.getMsg());
+        }
+        tag = new Tag();
         tag.setTagName(tagName);
         tag.setAuthorId(userId);
         int ins = tagMapper.insert(tag);
@@ -61,13 +67,12 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
 
     @Override
     public Result<Object> delTag(Long tagId, Long userId) {
-        Tag tag = tagMapper.selectById(tagId);
-        if (tag == null) {
-            Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
+        LambdaQueryWrapper<Tag> wrapper = new LambdaQueryWrapper<Tag>().eq(Tag::getId, tagId).eq(Tag::getAuthorId, userId);
+        Tag tag = tagMapper.selectOne(wrapper);
+        if (Objects.isNull(tag)) {
+            return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
         }
-        LambdaQueryWrapper<Tag> tagQueryWrapper = new LambdaQueryWrapper();
-        tagQueryWrapper.eq(Tag::getId, tagId);
-        int delete = tagMapper.delete(tagQueryWrapper);
+        int delete = tagMapper.delete(wrapper);
         if (delete <= 0) {
             return Result.fail(ErrorCode.DELETE_IS_ERROR.getCode(), ErrorCode.DELETE_IS_ERROR.getMsg());
         }
@@ -98,6 +103,14 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
             return Result.fail(ErrorCode.DELETE_IS_ERROR.getCode(), ErrorCode.DELETE_IS_ERROR.getMsg());
         }
         return Result.success();
+    }
+
+    @Override
+    public Result<List<TagVo>> searchTag(String tagName, Long userId) {
+        LambdaQueryWrapper<Tag> wrapper = new LambdaQueryWrapper<Tag>().like(Tag::getTagName, tagName).eq(Tag::getAuthorId, userId);
+        List<Tag> tags = tagMapper.selectList(wrapper);
+        List<TagVo> tagVos = copyProperties.copyList(tags, TagVo.class);
+        return Result.success(tagVos);
     }
 
 }

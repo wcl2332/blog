@@ -73,7 +73,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userLambdaQueryWrapper.eq(User::getAccount, loginName);
         User user = userMapper.selectOne(userLambdaQueryWrapper);
         if (user != null) {
-            return new Result(ErrorCode.ACCOUNT_ALREADY_EXIST.getCode(), ErrorCode.ACCOUNT_ALREADY_EXIST.getMsg());
+            return  Result.fail(ErrorCode.ACCOUNT_ALREADY_EXIST.getCode(), ErrorCode.ACCOUNT_ALREADY_EXIST.getMsg());
         }
         user = new User();
         user.setAccount(loginName);
@@ -89,6 +89,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             userLambdaUpdateWrapper.eq(User::getAccount, loginName).set(User::getLastTime, new Date());
             userMapper.update(user, userLambdaUpdateWrapper);
         }
+        Boolean delete = redisTemplate.delete(imageUId);
+        if (Boolean.FALSE.equals(delete)) {
+            redisTemplate.delete(imageUId);
+        }
         return Result.success(token);
+    }
+
+    @Override
+    public Result<String> updatePassword(String oldPassword, String newPassword, Long id) {
+        User user = userMapper.selectById(id);
+        if (user == null) {
+            return Result.fail(ErrorCode.ACCOUNT_NOT_EXIST.getCode(), ErrorCode.ACCOUNT_NOT_EXIST.getMsg());
+        }
+        String oPassword = user.getPassword();
+        if (!DigestUtils.md5Hex(KEY + oldPassword).equals(oPassword)) {
+            return Result.fail(ErrorCode.PARAMS_OLDPASSWORD_IS_ERROR.getCode(), ErrorCode.PARAMS_OLDPASSWORD_IS_ERROR.getMsg());
+        }
+        user.setPassword(DigestUtils.md5Hex(KEY + newPassword));
+        int update = userMapper.updateById(user);
+        if (update <= 0) {
+            return Result.fail(ErrorCode.UPDATE_IS_ERROR.getCode(), ErrorCode.UPDATE_IS_ERROR.getMsg());
+        }
+        return Result.success();
     }
 }

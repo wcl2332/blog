@@ -89,4 +89,18 @@ public class TagController {
         Long userId = JWTUtils.getUserInfo(token);
         return tagService.deleteTags(ids, userId);
     }
+
+    @ApiOperation("查询标签（模糊查询）")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "tagName" ,value = "标签名关键字")
+    })
+    @PostMapping("/searchTag")
+    public Result<List<TagVo>> searchTag(@RequestParam("tagName") String tagName, HttpServletRequest httpServletRequest) {
+        if (StringUtils.isEmpty(tagName)) {
+            return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
+        }
+        String token = httpServletRequest.getHeader("token");
+        Long userId = JWTUtils.getUserInfo(token);
+        return tagService.searchTag(tagName, userId);
+    }
 }

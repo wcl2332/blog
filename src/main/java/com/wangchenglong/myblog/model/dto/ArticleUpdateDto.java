@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -25,6 +26,7 @@ public class ArticleUpdateDto {
      * 文章标题
      */
     @ApiModelProperty(name = "title", value = "文章标题",  required = true)
+    @NotEmpty(message = "文章标题不能为空")
     private String title;
 
     /**
@@ -36,6 +38,7 @@ public class ArticleUpdateDto {
      * 文章内容
      */
     @ApiModelProperty(name = "content", value = "文章内容",  required = true)
+    @NotEmpty(message = "文章内容不能为空")
     private String content;
 
     /**

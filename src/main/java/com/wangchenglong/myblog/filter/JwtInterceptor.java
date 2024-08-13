@@ -37,32 +37,28 @@ public class JwtInterceptor implements HandlerInterceptor {
         String token = request.getHeader("token");
         //System.out.println("token>>>" + token);
         if (token == null || token.isEmpty()) {
-            Result result = Result.fail(ErrorCode.Token_IS_ERROR.getCode(), ErrorCode.Token_IS_ERROR.getMsg());
             response.setContentType("application/json;charset=utf-8");
-            response.getWriter().print(new ObjectMapper().writeValueAsString(result));
+            response.getWriter().print(new ObjectMapper().writeValueAsString(Result.fail(ErrorCode.Token_IS_ERROR.getCode(), ErrorCode.Token_IS_ERROR.getMsg())));
             return false;
         }
         // 判断 token 是否有效
         try {
             DecodedJWT decodedJWT = JWTUtils.verify(token);
         } catch (TokenExpiredException e) {
-            Result result = Result.fail(ErrorCode.Token_IS_ERROR.getCode(), ErrorCode.Token_IS_ERROR.getMsg());
             response.setContentType("application/json;charset=utf-8");
-            response.getWriter().print(new ObjectMapper().writeValueAsString(result));
+            response.getWriter().print(new ObjectMapper().writeValueAsString(Result.fail(ErrorCode.Token_IS_ERROR.getCode(), ErrorCode.Token_IS_ERROR.getMsg())));
             return false;
         } catch (Exception e) {
-            Result result = Result.fail(ErrorCode.Token_IS_ERROR.getCode(), ErrorCode.Token_IS_ERROR.getMsg());
             response.setContentType("application/json;charset=utf-8");
-            response.getWriter().print(new ObjectMapper().writeValueAsString(result));
+            response.getWriter().print(new ObjectMapper().writeValueAsString(Result.fail(ErrorCode.Token_IS_ERROR.getCode(), ErrorCode.Token_IS_ERROR.getMsg())));
             return false;
         }
         // 判断 token 中用户信息是否正确
         Long userId = JWTUtils.getUserInfo(token);
         User user = userService.getById(userId);
         if (user == null) {
-            Result result = Result.fail(ErrorCode.Token_IS_ERROR.getCode(), ErrorCode.Token_IS_ERROR.getMsg());
             response.setContentType("application/json;charset=utf-8");
-            response.getWriter().print(new ObjectMapper().writeValueAsString(result));
+            response.getWriter().print(new ObjectMapper().writeValueAsString(Result.fail(ErrorCode.Token_IS_ERROR.getCode(), ErrorCode.Token_IS_ERROR.getMsg())));
             return false;
         }
         return true;

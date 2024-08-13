@@ -1,6 +1,7 @@
 package com.wangchenglong.myblog.service.impl;
 
 import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.captcha.ShearCaptcha;
 import cn.hutool.captcha.generator.MathGenerator;
 import cn.hutool.core.util.IdUtil;
@@ -27,13 +28,13 @@ public class CaptchaServiceImpl implements CapthaService {
     @Override
     public Result<CaptchaVo> getCaptha() {
         //定义图形验证码的长、宽、验证码字符数、干扰线宽度
-        ShearCaptcha captcha = CaptchaUtil.createShearCaptcha(200, 100, 4, 4);
+        LineCaptcha captcha = CaptchaUtil.createLineCaptcha(200, 100, 4, 50);
         String imageId = IdUtil.simpleUUID();
-        redisTemplate.opsForValue().set(imageId, captcha.getCode(),1, TimeUnit.DAYS);
+        redisTemplate.opsForValue().set(imageId, captcha.getCode(), 20, TimeUnit.MINUTES);
         CaptchaVo captchaVo = new CaptchaVo();
         captchaVo.setUid(imageId);
         captchaVo.setCaptchaCode(captcha.getImageBase64Data());
-        return  Result.success(captchaVo);
+        return Result.success(captchaVo);
     }
 
 

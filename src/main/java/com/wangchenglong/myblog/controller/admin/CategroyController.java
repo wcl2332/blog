@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @Author: Wangchenglong
@@ -60,12 +62,26 @@ public class CategroyController {
     })
     @GetMapping("/listPage")
     public Result<PageVo<CategoryVo>> listCategory(@RequestParam("pageSize") Integer pageSize, @RequestParam("pageNum") Integer pageNum, HttpServletRequest request) {
-        if (pageNum == null || pageNum == null) {
+        if (Objects.isNull(pageSize) || pageSize <= 0 || Objects.isNull(pageNum) || pageNum <= 0) {
             return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
         }
         String token = request.getHeader("token");
         Long userId = JWTUtils.getUserInfo(token);
         return categoryService.listCategory(pageNum, pageSize, userId);
+    }
+
+    @ApiOperation("查询分类（模糊查询）")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "keyWord", value = "分类名关键字")
+    })
+    @PostMapping("/searchCategory")
+    public Result<List<CategoryVo>> searchCategory(@RequestParam("keyWord") String keyWord, HttpServletRequest request) {
+        if (keyWord == null || keyWord.isEmpty()) {
+            return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
+        }
+        String token = request.getHeader("token");
+        Long userId = JWTUtils.getUserInfo(token);
+        return categoryService.searchCategory(keyWord, userId);
     }
 
 }

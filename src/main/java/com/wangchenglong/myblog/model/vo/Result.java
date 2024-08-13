@@ -72,6 +72,10 @@ public class Result<T> {
         return new Result<>(code, msg);
     }
 
+    public static <T> Result<T> fail(Integer code, String msg, T data) {
+        return new Result<>(code, msg, data);
+    }
+
     @Override
     public String toString() {
         return "Result{" +

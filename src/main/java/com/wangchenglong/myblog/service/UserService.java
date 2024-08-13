@@ -13,4 +13,6 @@ public interface UserService extends IService<User> {
     Result<Object> updateUserInfo(UserDto userDTO, Long id);
 
     Result<String> registerUser(String loginName, String password, String imageUId, String imageCode,String nickName);
+
+    Result<String> updatePassword(String oldPassword, String newPassword, Long id);
 }

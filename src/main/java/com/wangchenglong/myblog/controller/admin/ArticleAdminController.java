@@ -16,11 +16,13 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,7 +52,6 @@ public class ArticleAdminController {
         }
         String token = httpServletRequest.getHeader("token");
         Long userId = JWTUtils.getUserInfo(token);
-        //Result result = articleService.deleteArticleById(articleId, userId);
         return articleService.deleteArticleById(articleId, userId);
     }
 
@@ -94,7 +95,7 @@ public class ArticleAdminController {
 
     @ApiOperation("新增文章")
     @PostMapping("/save")
-    public Result<Object> saveArticle(@RequestBody ArticleDto articleDto, HttpServletRequest httpServletRequest) {
+    public Result<Object> saveArticle(@Valid @RequestBody ArticleDto articleDto, HttpServletRequest httpServletRequest) {
         if (articleDto == null) {
             return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
         }
@@ -116,7 +117,7 @@ public class ArticleAdminController {
 
     @ApiOperation("文章修改")
     @PostMapping("/update")
-    public Result<Object> updateArticleById(@RequestBody ArticleUpdateDto articleUpdateDto, HttpServletRequest httpServletRequest) {
+    public Result<Object> updateArticleById(@Valid @RequestBody ArticleUpdateDto articleUpdateDto, HttpServletRequest httpServletRequest) {
         if (Objects.isNull(articleUpdateDto)) {
             return Result.fail(ErrorCode.UPLOAD_IS_FAILL.getCode(), ErrorCode.UPLOAD_IS_FAILL.getMsg());
         }

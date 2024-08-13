@@ -26,7 +26,7 @@ public class LoginServiceImpl implements LoginService {
     @Resource
     UserMapper userMapper;
     @Resource
-    RedisTemplate<String,Object> redisTemplate;
+    RedisTemplate<String, Object> redisTemplate;
 
     private final String KEY = "123456789_abcde_";
 
@@ -34,7 +34,7 @@ public class LoginServiceImpl implements LoginService {
     public Result<String> login(String account, String password, String imageUId, String imageCode) {
         Object result = redisTemplate.opsForValue().get(imageUId);
         if (result == null) {
-            return Result.fail(ErrorCode.CAPTCHA_IS_NULL.getCode(),ErrorCode.CAPTCHA_IS_NULL.getMsg());
+            return Result.fail(ErrorCode.CAPTCHA_IS_NULL.getCode(), ErrorCode.CAPTCHA_IS_NULL.getMsg());
         }
         if (!result.toString().equals(imageCode)) {
             return Result.fail(ErrorCode.CAPTCHA_IS_ERROR.getCode(), ErrorCode.CAPTCHA_IS_ERROR.getMsg());
@@ -54,6 +54,10 @@ public class LoginServiceImpl implements LoginService {
             LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<>();
             userLambdaUpdateWrapper.eq(User::getAccount, account).set(User::getLastTime, new Date());
             userMapper.update(user, userLambdaUpdateWrapper);
+        }
+        Boolean delete = redisTemplate.delete(imageUId);
+        if (Boolean.FALSE.equals(delete)) {
+            redisTemplate.delete(imageUId);
         }
         return Result.success(token);
     }
