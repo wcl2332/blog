@@ -81,16 +81,17 @@ public class ArticleAdminController {
     @ApiOperation("文章列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNum", value = "页码"),
-            @ApiImplicitParam(name = "pageSize", value = "页面显示个数")
+            @ApiImplicitParam(name = "pageSize", value = "页面显示个数"),
+            @ApiImplicitParam(name = "statusCode", value = "文章状态，当需要获取 草稿状态的时,传入当前参数为0，获取这已发布状态的可不传")
     })
     @PostMapping("/list")
-    public Result<PageVo<ArticleVo>> listArticles(@RequestParam("pageNum") Integer page, @RequestParam("pageSize") Integer count, HttpServletRequest httpServletRequest) {
+    public Result<PageVo<ArticleVo>> listArticles(@RequestParam("pageNum") Integer page, @RequestParam("pageSize") Integer count, @RequestParam(value = "statusCode", required = false) Integer statusCode, HttpServletRequest httpServletRequest) {
         if (page == null || count == null) {
             return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
         }
         String token = httpServletRequest.getHeader("token");
         Long userId = JWTUtils.getUserInfo(token);
-        return articleService.listArticles(page, count, userId);
+        return articleService.listArticles(page, count, statusCode, userId);
     }
 
     @ApiOperation("新增文章")

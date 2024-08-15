@@ -58,16 +58,17 @@ public class CategroyController {
     @ApiOperation("分类列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageSize", value = "页面显示个数"),
-            @ApiImplicitParam(name = "pageNum", value = "页码")
+            @ApiImplicitParam(name = "pageNum", value = "页码"),
+            @ApiImplicitParam(name = "keyWord", value = "查询关键字，不传就默认查询全部的", required = false)
     })
     @GetMapping("/listPage")
-    public Result<PageVo<CategoryVo>> listCategory(@RequestParam("pageSize") Integer pageSize, @RequestParam("pageNum") Integer pageNum, HttpServletRequest request) {
+    public Result<PageVo<CategoryVo>> listCategory(@RequestParam("pageSize") Integer pageSize, @RequestParam("pageNum") Integer pageNum, @RequestParam(value = "keyWord",required = false) String keyWord, HttpServletRequest request) {
         if (Objects.isNull(pageSize) || pageSize <= 0 || Objects.isNull(pageNum) || pageNum <= 0) {
             return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
         }
         String token = request.getHeader("token");
         Long userId = JWTUtils.getUserInfo(token);
-        return categoryService.listCategory(pageNum, pageSize, userId);
+        return categoryService.listCategory(pageNum, pageSize, userId, keyWord);
     }
 
     @ApiOperation("查询分类（模糊查询）")

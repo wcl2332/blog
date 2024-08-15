@@ -18,7 +18,7 @@ public interface ArticleService extends IService<Article> {
 
     Result<ArticleVo> findArticleById(Long articleId, Long userId);
 
-    Result<PageVo<ArticleVo>> listArticles(Integer page, Integer count, Long userId);
+    Result<PageVo<ArticleVo>> listArticles(Integer page, Integer count, Integer statusCode, Long userId);
 
     Result<Object> saveArticle(ArticleDto articleDTO, Long userId);
 

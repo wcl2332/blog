@@ -13,7 +13,7 @@ public interface CategoryService extends IService<Category> {
 
     Result<String> deleteCategory(Long CategoryId, Long authorId);
 
-    Result<PageVo<CategoryVo>> listCategory(Integer pageNum, Integer pageSize, Long authorId);
+    Result<PageVo<CategoryVo>> listCategory(Integer pageNum, Integer pageSize, Long authorId,String keyWord);
 
     Result<List<CategoryVo>> searchCategory(String keyword, Long authorId);
 }

@@ -76,4 +76,12 @@ public class ArticleDto {
     @NotEmpty(message = "文章状态不能为空")
     private Integer statusCode;
 
+
+    /**
+     * 文章列表显示内容, 则 概述
+     */
+    @ApiModelProperty(name = "introduction", value = "文章概述，可以尝试截取合适的文章内容长度做为字段")
+    @NotEmpty(message = "文章概述不能为空")
+    private String introduction;
+
 }

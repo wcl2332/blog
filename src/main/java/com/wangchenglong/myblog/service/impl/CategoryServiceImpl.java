@@ -12,6 +12,7 @@ import com.wangchenglong.myblog.model.vo.Result;
 import com.wangchenglong.myblog.service.CategoryService;
 import com.wangchenglong.myblog.utils.CopyProperties;
 import lombok.extern.log4j.Log4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -59,9 +60,13 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     }
 
     @Override
-    public Result<PageVo<CategoryVo>> listCategory(Integer pageNum, Integer pageSize, Long authorId) {
+    public Result<PageVo<CategoryVo>> listCategory(Integer pageNum, Integer pageSize, Long authorId, String keyWord) {
         LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Category::getAuthorId, authorId);
+        if (StringUtils.isNotBlank(keyWord)) {
+            queryWrapper.like(Category::getName, keyWord).eq(Category::getAuthorId, authorId).orderByDesc(Category::getCreateTime);
+        } else {
+            queryWrapper.eq(Category::getAuthorId, authorId).orderByDesc(Category::getCreateTime);
+        }
         Page<Category> categoryPage = categoryMapper.selectPage(new Page<Category>(pageNum, pageSize), queryWrapper);
         List<Category> records = categoryPage.getRecords();
         List<CategoryVo> categories = copyProperties.copyList(records, CategoryVo.class);

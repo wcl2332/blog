@@ -28,7 +28,7 @@ public enum ErrorCode {
     ACCOUNT_NOT_EXIST(2001, "用户不存在"),
     ACCOUNT_ALREADY_EXIST(2002, "用户已存在"),
     ACCOUNT_INSERT_FAIL(2003, "注册失败"),
-    Exception_IS_ERROR(3000, "系统异常"),
+    Exception_IS_ERROR(3000, "系统异常,请稍后再试"),
     Exception_PARAMS_IS_ERROR(3001, "参数异常");
 
     private int code;

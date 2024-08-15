@@ -13,6 +13,8 @@ import com.wangchenglong.myblog.model.vo.TagVo;
 import com.wangchenglong.myblog.service.ArticleTagService;
 import com.wangchenglong.myblog.service.TagService;
 import com.wangchenglong.myblog.utils.CopyProperties;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -80,12 +82,16 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
     }
 
     @Override
-    public Result<PageVo<TagVo>> getTags(Long userId, Integer pageNum, Integer pageSize) {
+    public Result<PageVo<TagVo>> getTags(Long userId, Integer pageNum, Integer pageSize, String keyWord) {
         Page<Tag> tagPage = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<Tag> tagQueryWrapper = new LambdaQueryWrapper();
-        tagQueryWrapper.eq(Tag::getAuthorId, userId).orderByDesc(Tag::getCreateTime);
+        if (StringUtils.isNotBlank(keyWord)) {
+            tagQueryWrapper.like(Tag::getTagName, keyWord).eq(Tag::getAuthorId, userId).orderByDesc(Tag::getCreateTime);
+        } else {
+            tagQueryWrapper.eq(Tag::getAuthorId, userId).orderByDesc(Tag::getCreateTime);
+        }
         Page<Tag> tagPageInfo = tagMapper.selectPage(tagPage, tagQueryWrapper);
-        PageVo<TagVo> pageVo = new PageVo();
+        PageVo<TagVo> pageVo = new PageVo<>();
         pageVo.setPages(tagPageInfo.getPages());
         pageVo.setTotal(tagPageInfo.getTotal());
         pageVo.setSize(tagPageInfo.getSize());

@@ -110,10 +110,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public Result<PageVo<ArticleVo>> listArticles(Integer page, Integer count, Long userId) {
+    public Result<PageVo<ArticleVo>> listArticles(Integer page, Integer count, Integer statusCode, Long userId) {
         Page<Article> articlePage = new Page<>(page, count);
         LambdaQueryWrapper<Article> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(Article::getAuthorId, userId).orderByDesc(Article::getWeight, Article::getCreateTime);
+        if (statusCode != null) {
+            lambdaQueryWrapper.eq(Article::getStatusCode, 0).eq(Article::getAuthorId, userId).orderByDesc(Article::getWeight, Article::getCreateTime);
+        } else {
+            lambdaQueryWrapper.eq(Article::getAuthorId, userId).eq(Article::getStatusCode, 1).orderByDesc(Article::getWeight, Article::getCreateTime);
+        }
         Page<Article> articlePageInfo = articleMapper.selectPage(articlePage, lambdaQueryWrapper);
         long total = articlePageInfo.getTotal();
         long current = articlePageInfo.getCurrent();

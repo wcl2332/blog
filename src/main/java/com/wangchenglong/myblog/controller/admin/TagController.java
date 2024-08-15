@@ -37,15 +37,16 @@ public class TagController {
     @GetMapping("/list")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNum", value = "页码"),
-            @ApiImplicitParam(name = "pageSize", value = "显示个数")
+            @ApiImplicitParam(name = "pageSize", value = "显示个数"),
+            @ApiImplicitParam(name = "keyWord", value = "查询关键字，不传就默认查询全部的",required = false)
     })
-    public Result<PageVo<TagVo>> listTags(@RequestParam("pageNum") Integer pageNum, @RequestParam("pageSize") Integer pageSize, HttpServletRequest httpServletRequest) {
-        if (pageNum == null || pageSize == null) {
+    public Result<PageVo<TagVo>> listTags(@RequestParam("pageNum") Integer pageNum, @RequestParam("pageSize") Integer pageSize, @RequestParam(value = "keyWord",required = false) String keyWord, HttpServletRequest httpServletRequest) {
+        if (pageNum == null || pageNum <= 0 || pageSize == null || pageSize <= 0) {
             return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
         }
         String token = httpServletRequest.getHeader("token");
         Long userId = JWTUtils.getUserInfo(token);
-        return tagService.getTags(userId, pageNum, pageSize);
+        return tagService.getTags(userId, pageNum, pageSize, keyWord);
     }
 
     @ApiOperation("新增标签")
@@ -92,7 +93,7 @@ public class TagController {
 
     @ApiOperation("查询标签（模糊查询）")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "tagName" ,value = "标签名关键字")
+            @ApiImplicitParam(name = "tagName", value = "标签名关键字")
     })
     @PostMapping("/searchTag")
     public Result<List<TagVo>> searchTag(@RequestParam("tagName") String tagName, HttpServletRequest httpServletRequest) {
