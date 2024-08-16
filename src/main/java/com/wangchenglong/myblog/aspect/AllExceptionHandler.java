@@ -23,7 +23,7 @@ public class AllExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Result<Object> doException(Exception exception) {
         Map<String, String> errors = new HashMap<>();
-        errors.put("Exception", exception.getMessage());
+        errors.put("exceptionMessage", exception.getMessage());
         return Result.fail(ErrorCode.Exception_IS_ERROR.getCode(), ErrorCode.Exception_IS_ERROR.getMsg(), errors);
     }
 

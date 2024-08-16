@@ -135,7 +135,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Result<Object> saveArticle(ArticleDto articleDTO, Long userId) {
         Article article = new Article();
         BeanUtils.copyProperties(articleDTO, article);
@@ -147,17 +147,26 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         articleBody.setContent(articleDTO.getContent());
         int insArticleBody = articleBodyMapper.insert(articleBody);
         if (insArticleBody <= 0) {
-            return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
+            //return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
+            throw new RuntimeException("文章信息插入失败");
         }
         // insert 插入 article 信息
         Long articleBodyId = articleBody.getId();
         article.setContentId(articleBodyId);
         int ins = articleMapper.insert(article);
         if (ins <= 0) {
-            return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
+            //return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
+            throw new RuntimeException("文章内容插入失败");
         }
         // insert 插入tag 标签信息
         String[] tagIds = articleDTO.getTagIds().split(",");
+        for (String tagId : tagIds) {
+            Tag tag = tagService.getById(tagId);
+            if (tag == null) {
+                //return Result.fail(ErrorCode.PARAMS_TAG_IS_NULL.getCode(), "tagId:" + tagId + ErrorCode.PARAMS_TAG_IS_NULL.getMsg());
+                throw new IllegalArgumentException("tagId:" + tagId + "标签不存在");
+            }
+        }
         List<Tag> tagList = tagService.listByIds(Arrays.asList(tagIds));
         List<ArticleTag> articleTagList = new ArrayList<>();
         for (Tag tag : tagList) {
@@ -170,13 +179,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         // 批量插入 articleTagService
         boolean b = articleTagService.saveBatch(articleTagList);
         if (!b) {
-            return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
+            //return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
+            throw new RuntimeException("文章标签插入失败");
         }
         //分类
         Long categoryId = articleDTO.getCategoryId();
         Category category = categoryMapper.selectById(categoryId);
         if (category == null) {
-            return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
+            throw new IllegalArgumentException("categoryId：" + categoryId + "分类不存在");
         }
         ArticleCategory articleCategory = new ArticleCategory();
         articleCategory.setCategoryId(categoryId);
@@ -184,7 +194,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         articleCategory.setUserId(userId);
         boolean save = articleCategoryService.save(articleCategory);
         if (!save) {
-            return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
+            //return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
+            throw new RuntimeException("文章分类插入失败");
         }
         return Result.success();
     }
@@ -203,19 +214,24 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             article.setWeight(0);
         }
         int update = articleMapper.updateById(article);
-        if (update < 0) {
+        if (update <= 0) {
             return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
         }
         return Result.success();
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Result<Object> updateArticle(ArticleUpdateDto articleDTO, Long userId) {
+        Category category = categoryMapper.selectById(articleDTO.getCategoryId());
+        if (Objects.isNull(category)) {
+            throw new IllegalArgumentException("categoryId：" + articleDTO.getCategoryId() + "分类不存在");
+        }
         //1.判断文章是否存在
         Article article = articleMapper.selectById(articleDTO.getId());
         if (Objects.isNull(article)) {
-            return Result.fail(ErrorCode.ARTICLE_IS_NULL.getCode(), ErrorCode.ARTICLE_IS_NULL.getMsg());
+            //return Result.fail(ErrorCode.ARTICLE_IS_NULL.getCode(), ErrorCode.ARTICLE_IS_NULL.getMsg());
+            throw new IllegalArgumentException("articleId：" + articleDTO.getId() + "文章不存在");
         }
         BeanUtils.copyProperties(articleDTO, article);
         article.setAuthorId(userId);
@@ -225,20 +241,30 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         articleBody.setContent(articleDTO.getContent());
         int updArticleBody = articleBodyMapper.updateById(articleBody);
         if (updArticleBody <= 0) {
-            return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
+            //return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
+            throw new RuntimeException("文章修改失败");
         }
         Long articleBodyId = articleBody.getId();
         article.setContentId(articleBodyId);
         int ins = articleMapper.updateById(article);
         if (ins <= 0) {
-            return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
+            //return Result.fail(ErrorCode.INSERT_IS_FAILL.getCode(), ErrorCode.INSERT_IS_FAILL.getMsg());
+            throw new RuntimeException("文章内容修改失败");
         }
         // insert 插入tag 标签信息
         String[] tagIds = articleDTO.getTagIds().split(",");
+        for (String tagId : tagIds) {
+            Tag tag = tagService.getById(tagId);
+            if (tag == null) {
+                //return Result.fail(ErrorCode.PARAMS_TAG_IS_NULL.getCode(), "tagId:" + tagId + ErrorCode.PARAMS_TAG_IS_NULL.getMsg());
+                throw new IllegalArgumentException("tagId" + tagId + "标签不存在");
+            }
+        }
         List<Tag> tagList = tagService.listByIds(Arrays.asList(tagIds));
         boolean remove = articleTagService.remove(new LambdaQueryWrapper<ArticleTag>().eq(ArticleTag::getArticleId, articleDTO.getId()).in(ArticleTag::getTagId, tagIds));
         if (!remove) {
-            return Result.fail(ErrorCode.PARAMS_UPDATE_IS_ERROR.getCode(), ErrorCode.PARAMS_UPDATE_IS_ERROR.getMsg());
+            //return Result.fail(ErrorCode.PARAMS_UPDATE_IS_ERROR.getCode(), ErrorCode.PARAMS_UPDATE_IS_ERROR.getMsg());
+            throw new RuntimeException("文章标签修改失败");
         }
         List<ArticleTag> articleTagList = new ArrayList<>();
         for (Tag tag : tagList) {
@@ -251,7 +277,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         // 批量插入 articleTagService
         boolean b = articleTagService.saveBatch(articleTagList);
         if (!b) {
-            return Result.fail(ErrorCode.PARAMS_UPDATE_IS_ERROR.getCode(), ErrorCode.PARAMS_UPDATE_IS_ERROR.getMsg());
+            //return Result.fail(ErrorCode.PARAMS_UPDATE_IS_ERROR.getCode(), ErrorCode.PARAMS_UPDATE_IS_ERROR.getMsg());
+            throw new RuntimeException("文章标签西瓜失败");
         }
         return Result.success();
     }
@@ -262,7 +289,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         LambdaQueryWrapper<Article> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Article::getAuthorId, userId).like(Article::getTitle, keyWord).orderByDesc(Article::getWeight, Article::getCreateTime);
         Page<Article> articlePageInfo = articleMapper.selectPage(articlePage, lambdaQueryWrapper);
-        PageVo<ArticleVo> pageVO = new PageVo();
+        PageVo<ArticleVo> pageVO = new PageVo<>();
         pageVO.setPages(articlePageInfo.getPages());
         pageVO.setTotal(articlePageInfo.getTotal());
         pageVO.setCurrent(articlePageInfo.getCurrent());

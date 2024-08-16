@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -43,7 +45,9 @@ public class ArticleDto {
      * 文章类型
      */
     @ApiModelProperty(name = "type", value = "文章类型(0-原创 1-转载)", required = true)
-    @NotEmpty(message = "文章类型不能为空")
+    @NotNull
+    @Max(value = 1, message = "type 最大为1")
+    @Min(value = 0, message = "type 最小为0")
     private Integer type;
 
     /**
@@ -73,7 +77,9 @@ public class ArticleDto {
      * 状态 0 草稿 1 发布
      */
     @ApiModelProperty(name = "statusCode", value = "文章状态(0-草稿 1-发布)", required = true)
-    @NotEmpty(message = "文章状态不能为空")
+    @NotNull
+    @Max(value = 1, message = "statusCode 最大为 1")
+    @Min(value = 0, message = "statusCode 最小为0")
     private Integer statusCode;
 
 

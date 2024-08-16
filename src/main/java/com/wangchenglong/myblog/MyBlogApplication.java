@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.nio.file.Files;
@@ -12,6 +13,7 @@ import java.nio.file.Paths;
 
 @SpringBootApplication
 @MapperScan("com.wangchenglong.myblog.mapper")
+@EnableTransactionManagement
 public class MyBlogApplication implements CommandLineRunner {
     @Value("${file.upload-dir}")
     private String uploadDir;
