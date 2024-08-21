@@ -27,4 +27,6 @@ public interface ArticleService extends IService<Article> {
     Result<Object> updateArticle(ArticleUpdateDto articleDTO, Long userId);
 
     Result<PageVo<ArticleVo>> searchArticle(String keyWord, Integer page, Integer count, Long userId);
+
+    Result<PageVo<ArticleVo>> searchArticleByCondition(String title, Integer categroyId, Integer tagId, Integer isTop, String startTime, String endTime, Integer page, Integer count, Long userId);
 }

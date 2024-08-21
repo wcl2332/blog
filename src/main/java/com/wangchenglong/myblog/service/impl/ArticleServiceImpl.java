@@ -18,6 +18,7 @@ import com.wangchenglong.myblog.service.ArticleService;
 import com.wangchenglong.myblog.service.ArticleTagService;
 import com.wangchenglong.myblog.service.TagService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -125,7 +126,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         long pages = articlePageInfo.getPages();
         List<Article> articles = articlePageInfo.getRecords();
         List<ArticleVo> articleVoList = copyPropertiesList(articles);
-        PageVo<ArticleVo> pageVo = new PageVo();
+        PageVo<ArticleVo> pageVo = new PageVo<>();
         pageVo.setCurrent(current);
         pageVo.setSize(size);
         pageVo.setTotal(total);
@@ -288,6 +289,41 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         Page<Article> articlePage = new Page<>(page, count);
         LambdaQueryWrapper<Article> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Article::getAuthorId, userId).like(Article::getTitle, keyWord).orderByDesc(Article::getWeight, Article::getCreateTime);
+        Page<Article> articlePageInfo = articleMapper.selectPage(articlePage, lambdaQueryWrapper);
+        PageVo<ArticleVo> pageVO = new PageVo<>();
+        pageVO.setPages(articlePageInfo.getPages());
+        pageVO.setTotal(articlePageInfo.getTotal());
+        pageVO.setCurrent(articlePageInfo.getCurrent());
+        pageVO.setSize(articlePageInfo.getSize());
+        List<Article> articles = articlePageInfo.getRecords();
+        List<ArticleVo> articleVOList = copyPropertiesList(articles);
+        pageVO.setRecords(articleVOList);
+        return Result.success(pageVO);
+    }
+
+    @Override
+    public Result<PageVo<ArticleVo>> searchArticleByCondition(String title, Integer categroyId, Integer tagId, Integer isTop, String startTime, String endTime, Integer page, Integer count, Long userId) {
+        Page<Article> articlePage = new Page<>(page, count);
+        LambdaQueryWrapper<Article> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.isBlank(title)) {
+            lambdaQueryWrapper.like(Article::getTitle, title);
+        }
+        if (Objects.nonNull(categroyId)) {
+            lambdaQueryWrapper.eq(Article::getCategoryId, categroyId);
+        }
+        if (Objects.nonNull(tagId)) {
+            lambdaQueryWrapper.eq(Article::getId, tagId);
+        }
+        if (Objects.nonNull(isTop)) {
+            if (isTop >= 1) {
+                lambdaQueryWrapper.ge(Article::getWeight, 1);
+            } else {
+                lambdaQueryWrapper.eq(Article::getWeight, 0);
+            }
+        }
+        if (StringUtils.isBlank(startTime) && StringUtils.isBlank(endTime)) {
+            lambdaQueryWrapper.between(Article::getCreateTime, startTime, endTime);
+        }
         Page<Article> articlePageInfo = articleMapper.selectPage(articlePage, lambdaQueryWrapper);
         PageVo<ArticleVo> pageVO = new PageVo<>();
         pageVO.setPages(articlePageInfo.getPages());

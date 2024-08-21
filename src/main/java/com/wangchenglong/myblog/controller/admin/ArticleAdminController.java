@@ -130,11 +130,11 @@ public class ArticleAdminController {
     @ApiOperation("文章查询")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "keyword", value = "搜索关键字"),
-            @ApiImplicitParam(name = "page", value = "页码"),
-            @ApiImplicitParam(name = "count", value = "页面显示个数")
+            @ApiImplicitParam(name = "pageNum", value = "页码"),
+            @ApiImplicitParam(name = "pageSize", value = "页面显示个数")
     })
     @PostMapping("/search")
-    public Result<PageVo<ArticleVo>> searchArticle(@RequestParam("keyword") String keyWord, @RequestParam("page") Integer page, @RequestParam("count") Integer count, HttpServletRequest httpServletRequest) {
+    public Result<PageVo<ArticleVo>> searchArticle(@RequestParam("keyword") String keyWord, @RequestParam("pageNum") Integer page, @RequestParam("pageSize") Integer count, HttpServletRequest httpServletRequest) {
         if (StringUtils.isBlank(keyWord)) {
             return Result.fail(ErrorCode.UPLOAD_IS_FAILL.getCode(), ErrorCode.UPLOAD_IS_FAILL.getMsg());
         }
@@ -144,5 +144,32 @@ public class ArticleAdminController {
         String token = httpServletRequest.getHeader("token");
         Long userId = JWTUtils.getUserInfo(token);
         return articleService.searchArticle(keyWord, page, count, userId);
+    }
+
+    @ApiOperation("文章多条件查询")
+    @PostMapping("/searchByCondition")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "title", value = "文章标题（支持模糊查询）", required = false),
+            @ApiImplicitParam(name = "categroyId", value = "分类标签", required = false),
+            @ApiImplicitParam(name = "tagId", value = "标签id", required = false),
+            @ApiImplicitParam(name = "isTop", value = "是否置顶（不置顶 0 ，置顶 大于等于1 ）", required = false),
+            @ApiImplicitParam(name = "startTime", value = "开始时间", required = false),
+            @ApiImplicitParam(name = "endTime", value = "结束时间", required = false),
+            @ApiImplicitParam(name = "pageNum", value = "页码", required = true),
+            @ApiImplicitParam(name = "pageSize", value = "页面显示个数", required = true)
+    })
+    public Result<PageVo<ArticleVo>> searchArticleByCondition(
+            @RequestParam("pageNum") Integer page,
+            @RequestParam("pageSize") Integer count,
+            @RequestParam(value = "title",required = false) String title,
+            @RequestParam(value = "categroyId",required = false) Integer categroyId,
+            @RequestParam(value = "tagId",required = false) Integer tagId,
+            @RequestParam(value = "isTop",required = false) Integer isTop,
+            @RequestParam(value = "startTime",required = false) String startTime,
+            @RequestParam(value = "endTime",required = false) String endTime,
+            HttpServletRequest httpServletRequest) {
+        String token = httpServletRequest.getHeader("token");
+        Long userId = JWTUtils.getUserInfo(token);
+        return articleService.searchArticleByCondition(title, categroyId, tagId, isTop, startTime, endTime, page, count, userId);
     }
 }

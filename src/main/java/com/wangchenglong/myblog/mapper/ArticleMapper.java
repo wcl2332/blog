@@ -17,4 +17,6 @@ public interface ArticleMapper extends BaseMapper<Article> {
     Integer deleteBatch(List<Long> idlist, Long userId);
 
     Integer getMaxWeight();
+
+
 }
