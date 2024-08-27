@@ -327,7 +327,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (!StringUtils.isBlank(startTime) && !StringUtils.isBlank(endTime)) {
             lambdaQueryWrapper.between(Article::getCreateTime, startTime, endTime);
         }
-        lambdaQueryWrapper.eq(Article::getAuthorId,userId);
+        lambdaQueryWrapper.eq(Article::getAuthorId,userId).orderByDesc(Article::getWeight);
         Page<Article> articlePageInfo = articleMapper.selectPage(articlePage, lambdaQueryWrapper);
         PageVo<ArticleVo> pageVO = new PageVo<>();
         pageVO.setPages(articlePageInfo.getPages());

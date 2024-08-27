@@ -53,7 +53,7 @@ public class ArticleDto {
     /**
      * 当 type = 1  为转载文章时 ，需要有原文地址
      */
-    @ApiModelProperty(name = "originalUrl", value = "原文地址(当 type=1时，需要有原文地址)", required = true)
+    @ApiModelProperty(name = "originalUrl", value = "原文地址(当 type=1时，需要有原文地址)", required = false)
     private String originalUrl;
 
     /**
