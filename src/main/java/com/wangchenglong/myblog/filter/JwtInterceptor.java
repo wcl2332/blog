@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @Author: Wangchenglong
  * @Date: 2023/7/26 21:05
- * @Description: TODO
+ * @Description:
  */
 @Component
 public class JwtInterceptor implements HandlerInterceptor {

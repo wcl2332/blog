@@ -27,7 +27,7 @@ import java.util.Objects;
 /**
  * @Author: Wangchenglong
  * @Date: 2023/8/2 16:29
- * @Description: TODO
+ * @Description:
  */
 @Service
 public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagService {
@@ -113,7 +113,12 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
 
     @Override
     public Result<List<TagVo>> searchTag(String tagName, Long userId) {
-        LambdaQueryWrapper<Tag> wrapper = new LambdaQueryWrapper<Tag>().like(Tag::getTagName, tagName).eq(Tag::getAuthorId, userId);
+        LambdaQueryWrapper<Tag> wrapper = new LambdaQueryWrapper<Tag>();
+        if (!Objects.isNull(tagName)) {
+            wrapper.like(Tag::getTagName, tagName).eq(Tag::getAuthorId, userId);
+        } else {
+            wrapper.eq(Tag::getAuthorId, userId);
+        }
         List<Tag> tags = tagMapper.selectList(wrapper);
         List<TagVo> tagVos = copyProperties.copyList(tags, TagVo.class);
         return Result.success(tagVos);

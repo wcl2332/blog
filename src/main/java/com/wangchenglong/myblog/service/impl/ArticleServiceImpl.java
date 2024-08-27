@@ -30,7 +30,7 @@ import java.util.*;
 /**
  * @Author: Wangchenglong
  * @Date: 2023/8/1 9:04
- * @Description: TODO
+ * @Description:
  */
 @Service
 @Slf4j
@@ -302,28 +302,32 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public Result<PageVo<ArticleVo>> searchArticleByCondition(String title, Integer categroyId, Integer tagId, Integer isTop, String startTime, String endTime, Integer page, Integer count, Long userId) {
+    public Result<PageVo<ArticleVo>> searchArticleByCondition(String title, Integer categroyId, Integer tagId, Integer statusCode, Integer isTop, String startTime, String endTime, Integer page, Integer count, Long userId) {
         Page<Article> articlePage = new Page<>(page, count);
         LambdaQueryWrapper<Article> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.isBlank(title)) {
+        if (!StringUtils.isBlank(title)) {
             lambdaQueryWrapper.like(Article::getTitle, title);
         }
-        if (Objects.nonNull(categroyId)) {
+        if (!Objects.isNull(statusCode)) {
+            lambdaQueryWrapper.eq(Article::getStatusCode, statusCode);
+        }
+        if (!Objects.isNull(categroyId)) {
             lambdaQueryWrapper.eq(Article::getCategoryId, categroyId);
         }
-        if (Objects.nonNull(tagId)) {
-            lambdaQueryWrapper.eq(Article::getId, tagId);
+        if (!Objects.isNull(tagId)) {
+            lambdaQueryWrapper.like(Article::getTagIds, tagId);
         }
-        if (Objects.nonNull(isTop)) {
+        if (!Objects.isNull(isTop)) {
             if (isTop >= 1) {
                 lambdaQueryWrapper.ge(Article::getWeight, 1);
             } else {
                 lambdaQueryWrapper.eq(Article::getWeight, 0);
             }
         }
-        if (StringUtils.isBlank(startTime) && StringUtils.isBlank(endTime)) {
+        if (!StringUtils.isBlank(startTime) && !StringUtils.isBlank(endTime)) {
             lambdaQueryWrapper.between(Article::getCreateTime, startTime, endTime);
         }
+        lambdaQueryWrapper.eq(Article::getAuthorId,userId);
         Page<Article> articlePageInfo = articleMapper.selectPage(articlePage, lambdaQueryWrapper);
         PageVo<ArticleVo> pageVO = new PageVo<>();
         pageVO.setPages(articlePageInfo.getPages());

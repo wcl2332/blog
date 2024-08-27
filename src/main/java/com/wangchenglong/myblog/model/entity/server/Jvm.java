@@ -48,6 +48,21 @@ public class Jvm {
     @ApiModelProperty(name = "home", value = "JDK路径")
     private String home;
 
+    @ApiModelProperty(name = "startTime", value = "JDK启动时间")
+    private String startTime;
+
+    @ApiModelProperty(name = "runTime", value = "运行时间")
+    private String runTime;
+
+    @ApiModelProperty(name = "inputArgs", value = "运行参数")
+    private String inputArgs;
+
+    @ApiModelProperty(name = "name", value = "JD名称")
+    private String name;
+
+    private double used;
+
+    private double usage;
 
     public double getTotal() {
         return Arith.div(total, (1024 * 1024), 2);

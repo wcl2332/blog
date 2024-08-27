@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @Author: Wangchenglong
  * @Date: 2024/8/7 10:09
- * @Description: TODO
+ * @Description:
  */
 @Api(tags = "图片验证码")
 @RestController

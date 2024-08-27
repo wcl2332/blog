@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @Author: Wangchenglong
  * @Date: 2023/8/1 13:52
- * @Description: TODO
+ * @Description:
  */
 @ApiModel("分页返回前端的信息实体，records 中包含的是对应的对象的实体")
 @Data

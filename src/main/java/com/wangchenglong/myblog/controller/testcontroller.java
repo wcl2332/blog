@@ -4,17 +4,14 @@ import com.wangchenglong.myblog.model.entity.Article;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.xml.transform.Result;
 
 /**
  * @Author: Wangchenglong
  * @Date: 2023/7/26 20:08
- * @Description: TODO
+ * @Description:
  */
 @Api(tags = "测试管理")
 @RestController
@@ -31,8 +28,10 @@ public class testcontroller {
     public void findAllByName(){
     }
 
-    @PostMapping("/delete")
-    public static String del() {
+    @GetMapping("/delete")
+    public String del(@RequestParam("uid") String id) {
+        System.out.println(id);
+        int a = 10/0;
         return "";
     }
 }

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @Author: Wangchenglong
  * @Date: 2023/8/1 8:51
- * @Description: TODO
+ * @Description:
  */
 @Repository
 public interface ArticleMapper extends BaseMapper<Article> {

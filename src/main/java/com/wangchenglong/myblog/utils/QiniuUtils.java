@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * @Author: Wangchenglong
  * @Date: 2023/8/1 15:16
- * @Description: TODO
+ * @Description:
  */
 @Component
 public class QiniuUtils {

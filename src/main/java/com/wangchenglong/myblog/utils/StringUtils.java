@@ -4,6 +4,8 @@ package com.wangchenglong.myblog.utils;
 import cn.hutool.core.text.StrFormatter;
 import org.springframework.util.AntPathMatcher;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
 
 /**
@@ -577,5 +579,20 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
             }
         }
         return sb.toString();
+    }
+
+
+    /**
+     * 获取堆栈信息
+     *
+     * @param throwable 异常
+     * @return
+     */
+    public static String getStackTrace(Throwable throwable) {
+        StringWriter sw = new StringWriter();
+        try (PrintWriter pw = new PrintWriter(sw)) {
+            throwable.printStackTrace(pw);
+            return sw.toString();
+        }
     }
 }

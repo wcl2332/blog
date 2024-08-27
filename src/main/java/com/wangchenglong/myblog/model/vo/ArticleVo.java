@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * @Author: Wangchenglong
  * @Date: 2023/8/1 11:18
- * @Description: TODO
+ * @Description:
  */
 @ApiModel(value = "文章返回信息的实体类，包括分页中、获取文章中等返回的关于文章的信息")
 @Data
@@ -58,7 +58,7 @@ public class ArticleVo {
      * 文章发布时间
      */
     @ApiModelProperty(name = "createTime", value = "文章发布时间", required = true)
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date createTime;
     /**
      * 修改时间

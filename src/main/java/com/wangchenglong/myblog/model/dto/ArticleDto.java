@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * @Author: Wangchenglong
  * @Date: 2023/8/1 14:22
- * @Description: TODO
+ * @Description:
  */
 @Data
 @NoArgsConstructor
@@ -76,9 +76,9 @@ public class ArticleDto {
     /**
      * 状态 0 草稿 1 发布
      */
-    @ApiModelProperty(name = "statusCode", value = "文章状态(0-草稿 1-发布)", required = true)
+    @ApiModelProperty(name = "statusCode", value = "文章状态(0-草稿 1-发布 3-私密)", required = true)
     @NotNull
-    @Max(value = 1, message = "statusCode 最大为 1")
+    @Max(value = 3, message = "statusCode 最大为 3")
     @Min(value = 0, message = "statusCode 最小为0")
     private Integer statusCode;
 

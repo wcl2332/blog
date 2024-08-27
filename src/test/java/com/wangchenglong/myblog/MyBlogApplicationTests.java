@@ -46,16 +46,16 @@ class MyBlogApplicationTests {
         }
     }
 
-    @Test
-    public void list() {
-        Result list = articleService.listArticles(1, 20, Long.valueOf(2081681409));
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            System.out.println(objectMapper.writeValueAsString(list));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-    }
+//    @Test
+//    public void list() {
+//        Result list = articleService.listArticles(1, 20, Long.valueOf(2081681409));
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        try {
+//            System.out.println(objectMapper.writeValueAsString(list));
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Test
     public void save() {

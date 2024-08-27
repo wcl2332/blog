@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 /**
  * @Author: Wangchenglong
  * @Date: 2023/7/31 16:05
- * @Description: TODO
+ * @Description:
  */
 @ApiModel(value = "用户返回前端的信息实体")
 @Data

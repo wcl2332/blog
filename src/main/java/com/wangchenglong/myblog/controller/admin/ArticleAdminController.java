@@ -85,9 +85,12 @@ public class ArticleAdminController {
             @ApiImplicitParam(name = "statusCode", value = "文章状态，当需要获取 草稿状态的时,传入当前参数为0，获取这已发布状态的可不传")
     })
     @PostMapping("/list")
-    public Result<PageVo<ArticleVo>> listArticles(@RequestParam("pageNum") Integer page, @RequestParam("pageSize") Integer count, @RequestParam(value = "statusCode", required = false) Integer statusCode, HttpServletRequest httpServletRequest) {
-        if (page == null || count == null) {
-            return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
+    public Result<PageVo<ArticleVo>> listArticles(@RequestParam(value = "pageNum", defaultValue = "1") Integer page, @RequestParam(value = "pageSize", defaultValue = "10") Integer count, @RequestParam(value = "statusCode", required = false) Integer statusCode, HttpServletRequest httpServletRequest) {
+        if (count == null || count < 1) {
+            count = 10;
+        }
+        if (page == null || page < 1) {
+            page = 1;
         }
         String token = httpServletRequest.getHeader("token");
         Long userId = JWTUtils.getUserInfo(token);
@@ -134,12 +137,15 @@ public class ArticleAdminController {
             @ApiImplicitParam(name = "pageSize", value = "页面显示个数")
     })
     @PostMapping("/search")
-    public Result<PageVo<ArticleVo>> searchArticle(@RequestParam("keyword") String keyWord, @RequestParam("pageNum") Integer page, @RequestParam("pageSize") Integer count, HttpServletRequest httpServletRequest) {
+    public Result<PageVo<ArticleVo>> searchArticle(@RequestParam("keyword") String keyWord, @RequestParam(value = "pageNum", defaultValue = "1") Integer page, @RequestParam(value = "pageSize", defaultValue = "10") Integer count, HttpServletRequest httpServletRequest) {
         if (StringUtils.isBlank(keyWord)) {
             return Result.fail(ErrorCode.UPLOAD_IS_FAILL.getCode(), ErrorCode.UPLOAD_IS_FAILL.getMsg());
         }
-        if (Objects.isNull(page) || Objects.isNull(count)) {
-            return Result.fail(ErrorCode.UPLOAD_IS_FAILL.getCode(), ErrorCode.UPLOAD_IS_FAILL.getMsg());
+        if (page == null || page < 1) {
+            page = 1;
+        }
+        if (count == null || count < 1) {
+            count = 10;
         }
         String token = httpServletRequest.getHeader("token");
         Long userId = JWTUtils.getUserInfo(token);
@@ -150,26 +156,34 @@ public class ArticleAdminController {
     @PostMapping("/searchByCondition")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "title", value = "文章标题（支持模糊查询）", required = false),
-            @ApiImplicitParam(name = "categroyId", value = "分类标签", required = false),
-            @ApiImplicitParam(name = "tagId", value = "标签id", required = false),
+            @ApiImplicitParam(name = "categroyId", value = "分类id", required = false),
+            @ApiImplicitParam(name = "tagId", value = "标签Id", required = false),
+            @ApiImplicitParam(name = "statusCode", value = "文章状态 ( 0 草稿 1 发布 3私密)", required = false),
             @ApiImplicitParam(name = "isTop", value = "是否置顶（不置顶 0 ，置顶 大于等于1 ）", required = false),
-            @ApiImplicitParam(name = "startTime", value = "开始时间", required = false),
-            @ApiImplicitParam(name = "endTime", value = "结束时间", required = false),
+            @ApiImplicitParam(name = "startTime", value = "开始时间  (yyyy-MM-dd)", required = false),
+            @ApiImplicitParam(name = "endTime", value = "结束时间 (yyyy-MM-dd)", required = false),
             @ApiImplicitParam(name = "pageNum", value = "页码", required = true),
             @ApiImplicitParam(name = "pageSize", value = "页面显示个数", required = true)
     })
     public Result<PageVo<ArticleVo>> searchArticleByCondition(
-            @RequestParam("pageNum") Integer page,
-            @RequestParam("pageSize") Integer count,
-            @RequestParam(value = "title",required = false) String title,
-            @RequestParam(value = "categroyId",required = false) Integer categroyId,
-            @RequestParam(value = "tagId",required = false) Integer tagId,
-            @RequestParam(value = "isTop",required = false) Integer isTop,
-            @RequestParam(value = "startTime",required = false) String startTime,
-            @RequestParam(value = "endTime",required = false) String endTime,
+            @RequestParam(value = "pageNum", defaultValue = "1") Integer page,
+            @RequestParam(value = "pageSize", defaultValue = "10") Integer count,
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "categroyId", required = false) Integer categroyId,
+            @RequestParam(value = "tagId", required = false) Integer tagId,
+            @RequestParam(value = "statusCode", required = false) Integer statusCode,
+            @RequestParam(value = "isTop", required = false) Integer isTop,
+            @RequestParam(value = "startTime", required = false) String startTime,
+            @RequestParam(value = "endTime", required = false) String endTime,
             HttpServletRequest httpServletRequest) {
+        if (page == null || page < 1) {
+            page = 1;
+        }
+        if (count == null || count < 1) {
+            count = 10;
+        }
         String token = httpServletRequest.getHeader("token");
         Long userId = JWTUtils.getUserInfo(token);
-        return articleService.searchArticleByCondition(title, categroyId, tagId, isTop, startTime, endTime, page, count, userId);
+        return articleService.searchArticleByCondition(title, categroyId, tagId, statusCode, isTop, startTime, endTime, page, count, userId);
     }
 }

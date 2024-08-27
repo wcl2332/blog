@@ -18,11 +18,12 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @Author: Wangchenglong
  * @Date: 2024/8/9 14:20
- * @Description: TODO
+ * @Description:
  */
 @Service
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
@@ -81,7 +82,12 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
 
     @Override
     public Result<List<CategoryVo>> searchCategory(String keyword, Long authorId) {
-        LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<Category>().like(Category::getName, keyword).eq(Category::getAuthorId, authorId);
+        LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<Category>();
+        if (!Objects.isNull(keyword)) {
+            wrapper.like(Category::getName, keyword).eq(Category::getAuthorId, authorId);
+        } else {
+            wrapper.eq(Category::getAuthorId, authorId);
+        }
         List<Category> categories = categoryMapper.selectList(wrapper);
         List<CategoryVo> categoryVos = copyProperties.copyList(categories, CategoryVo.class);
         return Result.success(categoryVos);

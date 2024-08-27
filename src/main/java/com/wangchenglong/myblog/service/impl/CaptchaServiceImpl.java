@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @Author: Wangchenglong
  * @Date: 2024/8/7 14:38
- * @Description: TODO
+ * @Description:
  */
 @Service
 public class CaptchaServiceImpl implements CapthaService {

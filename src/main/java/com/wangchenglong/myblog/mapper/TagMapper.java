@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 /**
  * @Author: Wangchenglong
  * @Date: 2023/8/2 16:30
- * @Description: TODO
+ * @Description:
  */
 @Repository
 public interface TagMapper extends BaseMapper<Tag> {

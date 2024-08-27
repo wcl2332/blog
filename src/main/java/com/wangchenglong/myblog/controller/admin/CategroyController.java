@@ -22,7 +22,7 @@ import java.util.Objects;
 /**
  * @Author: Wangchenglong
  * @Date: 2024/8/9 14:33
- * @Description: TODO
+ * @Description:
  */
 @Api(tags = "管理端-分类管理")
 @RestController
@@ -62,9 +62,12 @@ public class CategroyController {
             @ApiImplicitParam(name = "keyWord", value = "查询关键字，不传就默认查询全部的", required = false)
     })
     @GetMapping("/listPage")
-    public Result<PageVo<CategoryVo>> listCategory(@RequestParam("pageSize") Integer pageSize, @RequestParam("pageNum") Integer pageNum, @RequestParam(value = "keyWord",required = false) String keyWord, HttpServletRequest request) {
-        if (Objects.isNull(pageSize) || pageSize <= 0 || Objects.isNull(pageNum) || pageNum <= 0) {
-            return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
+    public Result<PageVo<CategoryVo>> listCategory(@RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, @RequestParam(value = "keyWord", required = false) String keyWord, HttpServletRequest request) {
+        if (pageNum == null || pageNum < 1) {
+            pageNum = 1;
+        }
+        if (pageSize == null || pageSize < 1) {
+            pageSize = 10;
         }
         String token = request.getHeader("token");
         Long userId = JWTUtils.getUserInfo(token);
@@ -76,10 +79,7 @@ public class CategroyController {
             @ApiImplicitParam(name = "keyWord", value = "分类名关键字")
     })
     @PostMapping("/searchCategory")
-    public Result<List<CategoryVo>> searchCategory(@RequestParam("keyWord") String keyWord, HttpServletRequest request) {
-        if (keyWord == null || keyWord.isEmpty()) {
-            return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
-        }
+    public Result<List<CategoryVo>> searchCategory(@RequestParam(value = "keyWord", required = false) String keyWord, HttpServletRequest request) {
         String token = request.getHeader("token");
         Long userId = JWTUtils.getUserInfo(token);
         return categoryService.searchCategory(keyWord, userId);

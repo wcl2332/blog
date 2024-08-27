@@ -26,6 +26,9 @@ public class Mem {
     @ApiModelProperty(name = "free", value = "剩余内存")
     private double free;
 
+    @ApiModelProperty(name = "usage", value = "使用率%")
+    private double usage;
+
     public double getTotal() {
         return Arith.div(total, (1024 * 1024 * 1024), 2);
     }

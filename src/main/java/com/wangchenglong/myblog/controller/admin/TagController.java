@@ -24,7 +24,7 @@ import java.util.Objects;
 /**
  * @Author: Wangchenglong
  * @Date: 2023/8/4 10:59
- * @Description: TODO
+ * @Description:
  */
 @Api(tags = "管理端-文章标签相关")
 @RestController
@@ -38,11 +38,14 @@ public class TagController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "pageNum", value = "页码"),
             @ApiImplicitParam(name = "pageSize", value = "显示个数"),
-            @ApiImplicitParam(name = "keyWord", value = "查询关键字，不传就默认查询全部的",required = false)
+            @ApiImplicitParam(name = "keyWord", value = "查询关键字，不传就默认查询全部的", required = false)
     })
-    public Result<PageVo<TagVo>> listTags(@RequestParam("pageNum") Integer pageNum, @RequestParam("pageSize") Integer pageSize, @RequestParam(value = "keyWord",required = false) String keyWord, HttpServletRequest httpServletRequest) {
-        if (pageNum == null || pageNum <= 0 || pageSize == null || pageSize <= 0) {
-            return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
+    public Result<PageVo<TagVo>> listTags(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum, @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize, @RequestParam(value = "keyWord", required = false) String keyWord, HttpServletRequest httpServletRequest) {
+        if (pageNum == null || pageSize == null) {
+            pageNum = 1;
+        }
+        if (pageSize == null) {
+            pageSize = 10;
         }
         String token = httpServletRequest.getHeader("token");
         Long userId = JWTUtils.getUserInfo(token);
@@ -93,13 +96,10 @@ public class TagController {
 
     @ApiOperation("查询标签（模糊查询）")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "tagName", value = "标签名关键字")
+            @ApiImplicitParam(name = "keyWord", value = "标签名关键字")
     })
     @PostMapping("/searchTag")
-    public Result<List<TagVo>> searchTag(@RequestParam("tagName") String tagName, HttpServletRequest httpServletRequest) {
-        if (StringUtils.isEmpty(tagName)) {
-            return Result.fail(ErrorCode.PARAMS_IS_NULL.getCode(), ErrorCode.PARAMS_IS_NULL.getMsg());
-        }
+    public Result<List<TagVo>> searchTag(@RequestParam(value = "keyWord", required = false) String tagName, HttpServletRequest httpServletRequest) {
         String token = httpServletRequest.getHeader("token");
         Long userId = JWTUtils.getUserInfo(token);
         return tagService.searchTag(tagName, userId);

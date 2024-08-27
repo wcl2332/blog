@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 /**
  * @Author: Wangchenglong
  * @Date: 2024/8/7 16:23
- * @Description: TODO
+ * @Description:
  */
 @ApiModel(value = "图片验证码返回前端的实体类，")
 @Data

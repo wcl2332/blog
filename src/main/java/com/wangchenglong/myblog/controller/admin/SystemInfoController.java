@@ -16,9 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @Author: Wangchenglong
  * @Date: 2024/8/21 15:36
- * @Description: TODO
+ * @Description:
  */
-@Api(tags = "管理端 - 系统监控")
+@Api(tags = "管理端-系统监控")
 @RestController
 @RequestMapping("/sys")
 public class SystemInfoController {

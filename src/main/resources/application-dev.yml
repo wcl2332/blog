@@ -23,6 +23,11 @@ spring:
       file-size-threshold: 2MB
       max-request-size: 20MB
 
+  devtools:
+    restart:
+      enabled: true
+      additional-exclude: src/main/java
+
   redis:
     port: 6379
     host: 47.98.170.232
